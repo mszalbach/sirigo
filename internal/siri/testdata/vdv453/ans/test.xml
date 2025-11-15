@@ -1,0 +1,4 @@
+<Siri>
+  <time>{{ dateTime .Now }}</time>
+  <client>{{ .ClientRef }}</client>
+</Siri>

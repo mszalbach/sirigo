@@ -1,0 +1,13 @@
+version: "2"
+linters:
+  default: standard
+  enable:
+    - testifylint
+    - gosec
+    - importas
+    - modernize
+  exclusions:
+    rules:
+      - linters: [errcheck]
+        # no need to check defer errors
+        source: "^\\s*defer\\s+"

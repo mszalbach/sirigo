@@ -1,0 +1,20 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!.gitkeep
+
+!*.md
+
+!*.go
+!go.mod
+!go.sum
+
+!*.yaml
+!*.xml
+
+!Makefile
+
+# ...even if they are in subdirectories
+!*/

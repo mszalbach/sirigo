@@ -1,0 +1,8 @@
+<Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://www.siri.org.uk/siri">
+	<DataSupplyRequest>
+		<RequestTimestamp>{{ dateTime .Now }}</RequestTimestamp>
+		<ConsumerRef>{{ .ClientRef }}</ConsumerRef>
+		<NotificationRef>ABCDE0</NotificationRef>
+		<AllData>false</AllData>
+	</DataSupplyRequest>
+</Siri>
