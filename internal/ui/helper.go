@@ -8,7 +8,7 @@ import (
 
 func Highlight(text string, lexer string) string {
 	var buf bytes.Buffer
-	err := quick.Highlight(&buf, text, lexer, "terminal256", "github-dark")
+	err := quick.Highlight(&buf, text, lexer, "terminal256", codeStyle)
 	if err != nil {
 		return text
 	}

@@ -18,6 +18,8 @@ type Data struct {
 func main() {
 	cfg := loadConfig()
 
+	ui.InitStyles()
+
 	tc := siri.NewTemplateCache(cfg.templateDir)
 
 	responseView := tview.NewTextView()
@@ -39,12 +41,13 @@ func main() {
 	bodyInput.SetBorder(true).SetTitle("Request Body")
 	app := tview.NewApplication()
 	app.EnableMouse(true)
+	// TODO ctrl+c frei machen für strg+q oder sowas? und ctrl+c dann selber als Copy umsetzen
+	app.EnablePaste(true)
 
 	dropdown := tview.NewDropDown().
 		SetLabel("Templates: ").
 		SetOptions(tc.TemplateNames(), nil)
 	dropdown.SetSelectedFunc(func(text string, index int) {
-
 		et := tc.ExecuteTemplate(text, siri.Data{Now: time.Now(), ClientRef: cfg.clientRef})
 		bodyInput.SetText(et, false)
 	})
