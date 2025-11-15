@@ -34,7 +34,7 @@ func (tc TemplateCache) ExecuteTemplate(name string, data Data) string {
 	if err != nil {
 		return err.Error()
 	}
-	content, err := os.ReadFile(templateFile)
+	content, err := os.ReadFile(templateFile) //nolint gosec
 	if err != nil {
 		return err.Error()
 	}
@@ -56,7 +56,7 @@ func (tc TemplateCache) TemplateNames() []string {
 	root := filepath.Clean(tc.root)
 
 	var templateNames []string
-	filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+	filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error { //nolint errcheck I would ignore it anyway
 		if d.Type().IsRegular() {
 			if strings.HasSuffix(d.Name(), ".xml") {
 				f, _ := filepath.Rel(root, path)
@@ -65,5 +65,6 @@ func (tc TemplateCache) TemplateNames() []string {
 		}
 		return nil
 	})
+
 	return templateNames
 }
