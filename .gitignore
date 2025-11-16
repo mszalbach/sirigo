@@ -6,6 +6,7 @@
 !.gitkeep
 
 !*.md
+!LICENSE
 
 !*.go
 !go.mod
