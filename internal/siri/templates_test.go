@@ -1,9 +1,10 @@
-package siri
+package siri_test
 
 import (
 	"testing"
 	"time"
 
+	"github.com/mszalbach/sirigo/internal/siri"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,10 +12,10 @@ var now = time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 
 func Test_returns_rendered_template_with_replaced_variables(t *testing.T) {
 	// Given
-	tc := NewTemplateCache("testdata")
+	tc := siri.NewTemplateCache("testdata")
 
 	// When
-	actual := tc.ExecuteTemplate("siri/test.xml", Data{Now: now, ClientRef: "testClient"})
+	actual := tc.ExecuteTemplate("siri/test.xml", siri.Data{Now: now, ClientRef: "testClient"})
 
 	// Then
 	expected := `<Siri>
@@ -26,10 +27,10 @@ func Test_returns_rendered_template_with_replaced_variables(t *testing.T) {
 
 func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
 	// Given
-	tc := NewTemplateCache("testdata")
+	tc := siri.NewTemplateCache("testdata")
 
 	// When
-	actual := tc.ExecuteTemplate("siri/test.xml", Data{})
+	actual := tc.ExecuteTemplate("siri/test.xml", siri.Data{})
 
 	// Then
 	expected := `<Siri>
@@ -41,10 +42,10 @@ func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
 
 func Test_returns_some_string_when_there_are_no_templates(t *testing.T) {
 	// Given
-	tc := NewTemplateCache("testdata/empty")
+	tc := siri.NewTemplateCache("testdata/empty")
 
 	// When
-	actual := tc.ExecuteTemplate("DOES-NOT-EXIST.xml", Data{Now: now, ClientRef: "testClient"})
+	actual := tc.ExecuteTemplate("DOES-NOT-EXIST.xml", siri.Data{Now: now, ClientRef: "testClient"})
 
 	// Then
 	assert.NotEmpty(t, actual)
@@ -52,7 +53,7 @@ func Test_returns_some_string_when_there_are_no_templates(t *testing.T) {
 
 func Test_returns_template_names(t *testing.T) {
 	// Given
-	tc := NewTemplateCache("testdata")
+	tc := siri.NewTemplateCache("testdata")
 
 	// When
 	actual := tc.TemplateNames()
