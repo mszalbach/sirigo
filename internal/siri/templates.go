@@ -12,6 +12,11 @@ import (
 type TemplateCache struct {
 	root string
 }
+
+func NewTemplateCache(templatePath string) *TemplateCache {
+	return &TemplateCache{root: templatePath}
+}
+
 type Data struct {
 	Now       time.Time
 	ClientRef string
@@ -21,10 +26,6 @@ var funcs = template.FuncMap{
 	"dateTime": func(now time.Time) string {
 		return now.Format(time.RFC3339)
 	},
-}
-
-func NewTemplateCache(templatePath string) *TemplateCache {
-	return &TemplateCache{root: templatePath}
 }
 
 func (tc TemplateCache) ExecuteTemplate(name string, data Data) string {
