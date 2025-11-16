@@ -1,6 +1,9 @@
 package ui
 
 import (
+	"bytes"
+
+	"github.com/alecthomas/chroma/v2/quick"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -32,4 +35,14 @@ func InitStyles() {
 	tview.Styles.GraphicsColor = tcell.ColorGreen
 	tview.Styles.TertiaryTextColor = tcell.ColorGreen
 	tview.Styles.InverseTextColor = tcell.ColorGreen
+}
+
+func Highlight(text string, lexer string) string {
+	var buf bytes.Buffer
+	err := quick.Highlight(&buf, text, lexer, "terminal256", codeStyle)
+	if err != nil {
+		return text
+	}
+
+	return buf.String()
 }
