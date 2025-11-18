@@ -51,6 +51,7 @@ func Test_returns_some_string_when_there_are_no_templates(t *testing.T) {
 	assert.NotEmpty(t, actual)
 }
 
+// TODO mehr tests wenn man subn folder aussucht wie dann der Name ist
 func Test_returns_template_names(t *testing.T) {
 	// Given
 	tc := siri.NewTemplateCache("testdata")

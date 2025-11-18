@@ -39,8 +39,7 @@ func NewClient(address string) Client {
 }
 
 func (c Client) Send(url string, body string) ServerResponse {
-	// TODO muss noch ein POST werden und dann header richtig setzen
-	return get(url)
+	return post(url, body)
 }
 
 func (c Client) ListenAndServer() error {
@@ -77,6 +76,8 @@ func (c Client) handleAllRequests(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c.serverRequestWriter <- request
+
+	//TODO autoantwort fehlt
 }
 
 func getLanguage(contentType string) string {
@@ -94,13 +95,15 @@ func getLanguage(contentType string) string {
 	return parts[1]
 }
 
-func get(url string) ServerResponse {
-	res, err := http.Get(url) //nolint gosec
+var client http.Client = http.Client{Timeout: 10 * time.Second}
+
+func post(url string, body string) ServerResponse {
+	res, err := client.Post(url, "application/xml", strings.NewReader(body)) //nolint gosec
 
 	if err != nil {
 		return ServerResponse{
-			Body:     "",
-			Status:   err.Error(),
+			Body:     err.Error(),
+			Status:   res.Status,
 			Language: "plaintext"}
 	}
 	defer res.Body.Close()
