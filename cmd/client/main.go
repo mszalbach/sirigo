@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -23,14 +22,6 @@ func main() {
 	ui.InitStyles()
 
 	tc := siri.NewTemplateCache(cfg.templateDir)
-
-	go func() {
-		for {
-			val := <-siriClient.ServerRequest
-			fmt.Println("Go routine 1", val)
-		}
-
-	}()
 
 	responseView := tview.NewTextView()
 	responseView.SetDynamicColors(true).SetBorder(true).SetTitle("Response Body")
