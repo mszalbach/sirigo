@@ -1,20 +1,21 @@
-package siri_test
+package siri //nolint testpackage
 
 import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"strings"
 	"testing"
 
-	"github.com/mszalbach/sirigo/internal/siri"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func Test_siri_communcation(t *testing.T) {
+func Test_siri_client_sending_to_server(t *testing.T) {
 	// Given
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		assert.Equal(t, "/siri/v2/situation-exchange", req.URL.String())
+		assert.Equal(t, "/siri/2.1/situation-exchange", req.URL.String())
 		rw.Header().Set("content-type", "application/xml")
 		rw.WriteHeader(http.StatusOK)
 		_, err := fmt.Fprint(rw, `
@@ -36,8 +37,8 @@ func Test_siri_communcation(t *testing.T) {
 	defer server.Close()
 
 	//When
-	client := siri.NewClient("LISTENER NOT IMPORTANT")
-	actual := client.Send(server.URL+"/siri/v2/situation-exchange", `
+	client := NewClient("IMPORTANT")
+	actual := client.Send(server.URL+"/siri/2.1/situation-exchange", `
 <Siri>
 	<ServiceRequest>
 		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
@@ -51,7 +52,7 @@ func Test_siri_communcation(t *testing.T) {
 </Siri>`)
 
 	//Then
-	expected := siri.ServerResponse{Body: `
+	expected := ServerResponse{Body: `
 <Siri>
 	<SubscriptionResponse>
 		<ResponseTimestamp>2004-12-17T09:30:47-05:00</ResponseTimestamp>
@@ -69,7 +70,49 @@ func Test_siri_communcation(t *testing.T) {
 		Status:   "200 OK"}
 	assert.Equal(t, expected, actual)
 
-	//TODO server sends data ready and it is received
+}
+
+func Test_siri_client_receiving_from_server(t *testing.T) {
+	//Given
+	client := NewClient("NOT IMPORTANT")
+
+	//When
+	serverRequest, err := http.NewRequest(http.MethodPost, "/siri", strings.NewReader(`
+<Siri>
+	<DataReadyNotification>
+		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
+		<ProducerRef>KUBRICK</ProducerRef>
+	</DataReadyNotification>
+</Siri>`))
+	require.NoError(t, err)
+	serverRequest.RemoteAddr = "196.4.4.1"
+	serverRequest.Header.Set("content-type", "application/xml")
+
+	response := httptest.NewRecorder()
+
+	client.createHandler().ServeHTTP(response, serverRequest)
+
+	//Then
+	assert.Equal(t, http.StatusOK, response.Result().StatusCode)
+	assert.Len(t, client.ServerRequest, 1)
+
+	actualServerRequest := <-client.ServerRequest
+
+	expectedServerRequest := ServerRequest{
+		RemoteAddress: "196.4.4.1",
+		Url:           "/siri",
+		Language:      "xml",
+		Body: `
+<Siri>
+	<DataReadyNotification>
+		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
+		<ProducerRef>KUBRICK</ProducerRef>
+	</DataReadyNotification>
+</Siri>`,
+	}
+
+	assert.Equal(t, expectedServerRequest, actualServerRequest)
+
 }
 
 func Test_client_send_returns_server_responses(t *testing.T) {
@@ -92,11 +135,11 @@ func Test_client_send_returns_server_responses(t *testing.T) {
 			defer server.Close()
 
 			//When
-			client := siri.NewClient("LISTENER NOT IMPORTANT")
+			client := NewClient("LISTENER NOT IMPORTANT")
 			actual := client.Send(server.URL+"/siri/v2", "IGNORE")
 
 			//Then
-			expected := siri.ServerResponse{Body: ``, Language: "plaintext", Status: tc.expectedStatus}
+			expected := ServerResponse{Body: ``, Language: "plaintext", Status: tc.expectedStatus}
 			assert.Equal(t, expected, actual)
 		})
 	}
@@ -125,12 +168,38 @@ func Test_client_send_understands_content_types(t *testing.T) {
 			defer server.Close()
 
 			//When
-			client := siri.NewClient("LISTENER NOT IMPORTANT")
+			client := NewClient("NOT IMPORTANT")
 			actual := client.Send(server.URL+"/siri/v2", "IGNORE")
 
 			//Then
-			expected := siri.ServerResponse{Body: ``, Language: tc.expectedLanguage, Status: "200 OK"}
+			expected := ServerResponse{Body: ``, Language: tc.expectedLanguage, Status: "200 OK"}
 			assert.Equal(t, expected, actual)
 		})
 	}
+}
+
+func Test_server_does_not_work_for_non_post(t *testing.T) {
+	testCases := []string{http.MethodGet, http.MethodPut, http.MethodHead}
+	for _, tc := range testCases {
+		t.Run(tc, func(t *testing.T) {
+			//Given
+			client := NewClient("NOT IMPORTANT")
+
+			//When
+			request, _ := http.NewRequest(tc, "/players/Floyd", strings.NewReader(`
+<Siri>
+	<DataReadyNotification>
+		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
+		<ProducerRef>KUBRICK</ProducerRef>
+	</DataReadyNotification>
+</Siri>`))
+			response := httptest.NewRecorder()
+			client.createHandler().ServeHTTP(response, request)
+
+			//Then
+			assert.Equal(t, http.StatusMethodNotAllowed, response.Result().StatusCode)
+			assert.Empty(t, client.ServerRequest)
+		})
+	}
+
 }

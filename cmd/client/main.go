@@ -69,7 +69,7 @@ func main() {
 	var g errgroup.Group
 
 	app.SetRoot(appFlex, true).SetFocus(urlInput)
-	g.Go(func() error { return siriClient.ListenAndServer() })
+	g.Go(func() error { return siriClient.ListenAndServe() })
 	g.Go(func() error { return app.Run() })
 
 	panic(g.Wait())

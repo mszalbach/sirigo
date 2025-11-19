@@ -10,7 +10,6 @@ import (
 
 type Client struct {
 	address             string
-	clientEndpoint      *http.ServeMux
 	ServerRequest       <-chan ServerRequest
 	serverRequestWriter chan ServerRequest
 }
@@ -22,10 +21,10 @@ type ServerResponse struct {
 }
 
 type ServerRequest struct {
-	//TODO welche info brauch ich alles? vermutlich auch die IP der gegenseite
-	Url      string
-	Body     string
-	Language string
+	RemoteAddress string
+	Url           string
+	Body          string
+	Language      string
 }
 
 func NewClient(address string) Client {
@@ -34,22 +33,37 @@ func NewClient(address string) Client {
 		address:             address,
 		ServerRequest:       serverRequest,
 		serverRequestWriter: serverRequest,
-		clientEndpoint:      http.NewServeMux(),
 	}
 }
 
+var client http.Client = http.Client{Timeout: 10 * time.Second}
+
 func (c Client) Send(url string, body string) ServerResponse {
-	return post(url, body)
+	res, err := client.Post(url, "application/xml", strings.NewReader(body))
+	if err != nil {
+		return ServerResponse{Body: err.Error(), Status: res.Status, Language: "plaintext"}
+	}
+	defer res.Body.Close()
+	bytesBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		return ServerResponse{Body: "", Status: res.Status, Language: "plaintext"}
+	}
+	return ServerResponse{Body: string(bytesBody), Status: res.Status, Language: getLanguage(res.Header.Get("content-type"))}
 }
 
-func (c Client) ListenAndServer() error {
+func (c Client) ListenAndServe() error {
 	server := &http.Server{
 		Addr:              c.address,
 		ReadHeaderTimeout: 5 * time.Second,
-		Handler:           c.clientEndpoint,
+		Handler:           c.createHandler(),
 	}
-	c.clientEndpoint.HandleFunc("/", c.handleAllRequests)
 	return server.ListenAndServe()
+}
+
+func (c Client) createHandler() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", c.handleAllRequests)
+	return mux
 }
 
 func (c Client) handleAllRequests(w http.ResponseWriter, r *http.Request) {
@@ -61,18 +75,19 @@ func (c Client) handleAllRequests(w http.ResponseWriter, r *http.Request) {
 	bytesBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		request := ServerRequest{
-			Url:  r.URL.RequestURI(),
-			Body: err.Error(),
-			//TODO oder go?
-			Language: "plaintext",
+			RemoteAddress: r.RemoteAddr,
+			Url:           r.URL.RequestURI(),
+			Body:          err.Error(),
+			Language:      "plaintext",
 		}
 		c.serverRequestWriter <- request
 	}
 
 	request := ServerRequest{
-		Url:      r.URL.RequestURI(),
-		Body:     string(bytesBody),
-		Language: getLanguage(r.Header.Get("content-type")),
+		RemoteAddress: r.RemoteAddr,
+		Url:           r.URL.RequestURI(),
+		Body:          string(bytesBody),
+		Language:      getLanguage(r.Header.Get("content-type")),
 	}
 
 	c.serverRequestWriter <- request
@@ -93,31 +108,4 @@ func getLanguage(contentType string) string {
 	}
 
 	return parts[1]
-}
-
-var client http.Client = http.Client{Timeout: 10 * time.Second}
-
-func post(url string, body string) ServerResponse {
-	res, err := client.Post(url, "application/xml", strings.NewReader(body)) //nolint gosec
-
-	if err != nil {
-		return ServerResponse{
-			Body:     err.Error(),
-			Status:   res.Status,
-			Language: "plaintext"}
-	}
-	defer res.Body.Close()
-
-	bytesBody, err := io.ReadAll(res.Body)
-	if err != nil {
-		return ServerResponse{
-			Body:     "",
-			Status:   res.Status,
-			Language: "plaintext"}
-	}
-
-	return ServerResponse{
-		Body:     string(bytesBody),
-		Status:   res.Status,
-		Language: getLanguage(res.Header.Get("content-type"))}
 }
