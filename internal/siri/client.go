@@ -92,7 +92,7 @@ func (c Client) handleAllRequests(w http.ResponseWriter, r *http.Request) {
 
 	c.serverRequestWriter <- request
 
-	//TODO autoantwort fehlt
+	// TODO: auto-response is missing
 }
 
 func getLanguage(contentType string) string {

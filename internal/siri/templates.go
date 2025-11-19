@@ -29,7 +29,7 @@ var funcs = template.FuncMap{
 }
 
 func (tc TemplateCache) ExecuteTemplate(name string, data Data) string {
-	//TODO  viel besseres Error Handling?
+	// TODO: improve error handling
 	templateFile := filepath.Join(tc.root, name)
 	templateName, err := filepath.Rel(tc.root, templateFile)
 	if err != nil {

@@ -27,7 +27,7 @@ func main() {
 	go func() {
 		for {
 			val := <-siriClient.ServerRequest
-			fmt.Println("GORoutine 1", val)
+			fmt.Println("Go routine 1", val)
 		}
 
 	}()
@@ -51,7 +51,7 @@ func main() {
 	bodyInput.SetBorder(true).SetTitle("Request Body")
 	app := tview.NewApplication()
 	app.EnableMouse(true)
-	// TODO ctrl+c frei machen für strg+q oder sowas? und ctrl+c dann selber als Copy umsetzen
+	// TODO: free up ctrl+c for ctrl+q and implement copy functionality
 	app.EnablePaste(true)
 
 	dropdown := tview.NewDropDown().
@@ -65,7 +65,7 @@ func main() {
 	sendFlex := tview.NewFlex().SetDirection(tview.FlexRow).AddItem(urlInput, 2, 0, true).AddItem(dropdown, 2, 0, false).AddItem(bodyInput, 0, 1, false)
 	appFlex := tview.NewFlex().AddItem(sendFlex, 0, 1, false).AddItem(responseView, 0, 1, false)
 
-	//TODO the gui can end and the server will still run. Not sure if this is a problem?
+	// TODO: the GUI can end and the server will still run. Not sure if this is a problem?
 	var g errgroup.Group
 
 	app.SetRoot(appFlex, true).SetFocus(urlInput)

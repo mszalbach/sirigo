@@ -3,7 +3,7 @@
 ## Description
 
 Sirigo is a command line tool for interacting with [SIRI](https://transmodel-cen.eu/index.php/siri/) servers.
-Since the protocols and messages are quite similar, it also works with [VDV453 VDV454](https://www.vdv.de/) servers.
+Since the protocols and messages are quite similar, it also works with [VDV453 & VDV454](https://www.vdv.de/) servers.
 
 If you want to know more about the architecture and framework decisions, check out the [architecture documentation](./docs/README.md).
 
