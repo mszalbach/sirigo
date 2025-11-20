@@ -48,19 +48,43 @@ func Test_returns_some_string_when_there_are_no_templates(t *testing.T) {
 	actual := tc.ExecuteTemplate("DOES-NOT-EXIST.xml", siri.Data{Now: now, ClientRef: "testClient"})
 
 	// Then
-	assert.NotEmpty(t, actual)
+	expected := "open testdata/empty/DOES-NOT-EXIST.xml: no such file or directory"
+	assert.Equal(t, expected, actual)
 }
 
-// TODO mehr tests wenn man subn folder aussucht wie dann der Name ist
 func Test_returns_template_names(t *testing.T) {
-	// Given
-	tc := siri.NewTemplateCache("testdata")
+	testCases := []struct {
+		templatePath      string
+		expectedTemplates []string
+	}{
+		{"testdata", []string{"siri/test.xml", "siri/test2.xml", "vdv453/ans/test.xml", "vdv453/test.xml"}},
+		{"testdata/vdv453", []string{"ans/test.xml", "test.xml"}},
+		{"testdata/empty", nil},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.templatePath, func(t *testing.T) {
+			// Given
+			cache := siri.NewTemplateCache(tc.templatePath)
 
-	// When
-	actual := tc.TemplateNames()
+			// When
+			actual := cache.TemplateNames()
 
-	// Then
-	//TODO better examples in the testdata folder
-	expected := []string{"siri/test.xml", "siri/test2.xml", "vdv453/ans/test.xml", "vdv453/test.xml"}
-	assert.Equal(t, expected, actual)
+			// Then
+			//TODO better examples in the testdata folder
+			assert.Equal(t, tc.expectedTemplates, actual)
+		})
+	}
+}
+
+// Run with go test ./internal/siri  -fuzz=Fuzz
+func Fuzz_template_cache(f *testing.F) {
+
+	f.Add("testdata", "siri/test.xml")
+	f.Fuzz(func(t *testing.T, templatePath string, templateName string) {
+		tc := siri.NewTemplateCache(templatePath)
+		assert.NotNil(t, tc)
+		tc.TemplateNames()
+		assert.NotEmpty(t, tc.ExecuteTemplate(templateName, siri.Data{}))
+	})
+
 }

@@ -57,7 +57,10 @@ func (tc TemplateCache) TemplateNames() []string {
 	root := filepath.Clean(tc.root)
 
 	var templateNames []string
-	filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error { //nolint errcheck I would ignore it anyway
+	err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error { //nolint errcheck I would ignore it anyway
+		if err != nil {
+			return err
+		}
 		if d.Type().IsRegular() {
 			if strings.HasSuffix(d.Name(), ".xml") {
 				f, _ := filepath.Rel(root, path)
@@ -66,6 +69,10 @@ func (tc TemplateCache) TemplateNames() []string {
 		}
 		return nil
 	})
+
+	if err != nil {
+		return nil
+	}
 
 	return templateNames
 }
