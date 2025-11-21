@@ -62,16 +62,11 @@ func (c Client) ListenAndServe() error {
 
 func (c Client) createHandler() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", c.handleAllRequests)
+	mux.HandleFunc("POST /", c.handleServerRequests)
 	return mux
 }
 
-func (c Client) handleAllRequests(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "SIRI Requests should be done as POST", http.StatusMethodNotAllowed)
-		return
-	}
-
+func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 	bytesBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		request := ServerRequest{

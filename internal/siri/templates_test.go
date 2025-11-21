@@ -82,8 +82,10 @@ func Fuzz_template_cache(f *testing.F) {
 	f.Add("testdata", "siri/test.xml")
 	f.Fuzz(func(t *testing.T, templatePath string, templateName string) {
 		tc := siri.NewTemplateCache(templatePath)
-		assert.NotNil(t, tc)
-		tc.TemplateNames()
+		success := assert.NotNil(t, tc)
+		if success {
+			tc.TemplateNames()
+		}
 		assert.NotEmpty(t, tc.ExecuteTemplate(templateName, siri.Data{}))
 	})
 

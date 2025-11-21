@@ -77,14 +77,13 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 	client := NewClient("NOT IMPORTANT")
 
 	//When
-	serverRequest, err := http.NewRequest(http.MethodPost, "/siri", strings.NewReader(`
+	serverRequest, _ := http.NewRequest(http.MethodPost, "/siri", strings.NewReader(`
 <Siri>
 	<DataReadyNotification>
 		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
 		<ProducerRef>KUBRICK</ProducerRef>
 	</DataReadyNotification>
 </Siri>`))
-	require.NoError(t, err)
 	serverRequest.RemoteAddr = "196.4.4.1"
 	serverRequest.Header.Set("content-type", "application/xml")
 
@@ -94,8 +93,8 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 
 	//Then
 	assert.Equal(t, http.StatusOK, response.Result().StatusCode)
-	assert.Len(t, client.ServerRequest, 1)
 
+	require.Len(t, client.ServerRequest, 1)
 	actualServerRequest := <-client.ServerRequest
 
 	expectedServerRequest := ServerRequest{
