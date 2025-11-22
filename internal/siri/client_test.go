@@ -52,7 +52,8 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 </Siri>`)
 
 	// Then
-	expected := serverResponse{Body: `
+	expected := serverResponse{
+		Body: `
 <Siri>
 	<SubscriptionResponse>
 		<ResponseTimestamp>2004-12-17T09:30:47-05:00</ResponseTimestamp>
@@ -67,9 +68,9 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 	</SubscriptionResponse>
 </Siri>`,
 		Language: "xml",
-		Status:   http.StatusOK}
+		Status:   http.StatusOK,
+	}
 	assert.Equal(t, expected, actual)
-
 }
 
 func Test_siri_client_receiving_from_server(t *testing.T) {
@@ -129,7 +130,6 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 	}
 
 	assert.Equal(t, expectedServerRequest, actualServerRequest)
-
 }
 
 func Test_client_send_returns_server_responses(t *testing.T) {
@@ -160,7 +160,6 @@ func Test_client_send_returns_server_responses(t *testing.T) {
 			assert.Equal(t, expected, actual)
 		})
 	}
-
 }
 
 func Test_client_send_understands_content_types(t *testing.T) {
@@ -218,5 +217,4 @@ func Test_server_does_not_work_for_non_post(t *testing.T) {
 			assert.Empty(t, client.ServerRequest)
 		})
 	}
-
 }

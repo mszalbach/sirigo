@@ -13,7 +13,6 @@ import (
 )
 
 func main() {
-
 	cfg := loadConfig()
 	file, err := os.OpenFile(cfg.logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
 	if err != nil {
@@ -59,7 +58,6 @@ func main() {
 
 	dropdown.SetSelectedFunc(func(text string, index int) {
 		et, err := tc.ExecuteTemplate(text, siri.Data{Now: time.Now(), ClientRef: cfg.clientRef})
-
 		if err != nil {
 			bodyInput.SetText(err.Error(), false)
 			return
@@ -67,7 +65,11 @@ func main() {
 		bodyInput.SetText(et, false)
 	})
 
-	sendFlex := tview.NewFlex().SetDirection(tview.FlexRow).AddItem(urlInput, 2, 0, true).AddItem(dropdown, 2, 0, false).AddItem(bodyInput, 0, 1, false)
+	sendFlex := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(urlInput, 2, 0, true).
+		AddItem(dropdown, 2, 0, false).
+		AddItem(bodyInput, 0, 1, false)
 	appFlex := tview.NewFlex().AddItem(sendFlex, 0, 1, false).AddItem(responseView, 0, 1, false)
 
 	// TODO: the GUI can end and the server will still run

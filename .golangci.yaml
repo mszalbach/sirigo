@@ -17,3 +17,10 @@ linters:
       - linters: [errcheck]
         # no need to check defer errors
         source: "^\\s*defer\\s+"
+formatters:
+  enable:
+    - gofumpt
+    - golines  
+  settings:
+    golines:
+      max-len: 120  

@@ -18,7 +18,7 @@ lint: ## Run the linter.
 
 .PHONY: fmt
 fmt: ## Format the code.
-	@go fmt ./...
+	@golangci-lint fmt
 
 .PHONY: clean
 clean: ## Clean the build artifacts.

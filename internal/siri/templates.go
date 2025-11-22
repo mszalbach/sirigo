@@ -37,7 +37,6 @@ func (tc templateCache) ExecuteTemplate(name string, data Data) (string, error) 
 		return "", err
 	}
 	t, err := template.New(name).Funcs(funcs).Parse(string(content))
-
 	if err != nil {
 		slog.Error("Could not create template", slog.String("name", name), slog.Any("error", err))
 		return "", err
@@ -56,22 +55,24 @@ func (tc templateCache) TemplateNames() ([]string, error) {
 	root := filepath.Clean(tc.root)
 
 	var templateNames []string
-	err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error { //nolint errcheck I would ignore it anyway
-		if err != nil {
-			return err
-		}
-		if d.Type().IsRegular() {
-			if strings.HasSuffix(d.Name(), ".xml") {
-				f, err := filepath.Rel(root, path)
-				if err != nil {
-					return err
-				}
-				templateNames = append(templateNames, f)
+	err := filepath.WalkDir(
+		root,
+		func(path string, d os.DirEntry, err error) error {
+			if err != nil {
+				return err
 			}
-		}
-		return nil
-	})
-
+			if d.Type().IsRegular() {
+				if strings.HasSuffix(d.Name(), ".xml") {
+					f, err := filepath.Rel(root, path)
+					if err != nil {
+						return err
+					}
+					templateNames = append(templateNames, f)
+				}
+			}
+			return nil
+		},
+	)
 	if err != nil {
 		return nil, err
 	}

@@ -60,7 +60,11 @@ func (c client) Send(url string, body string) serverResponse {
 	if err != nil {
 		return serverResponse{Body: "", Status: res.StatusCode, Language: "plaintext"}
 	}
-	return serverResponse{Body: string(bytesBody), Status: res.StatusCode, Language: getLanguage(res.Header.Get("Content-Type"))}
+	return serverResponse{
+		Body:     string(bytesBody),
+		Status:   res.StatusCode,
+		Language: getLanguage(res.Header.Get("Content-Type")),
+	}
 }
 
 func (c client) ListenAndServe() error {
@@ -109,7 +113,6 @@ func (c client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 
 func getLanguage(contentType string) string {
 	m, _, err := mime.ParseMediaType(contentType)
-
 	if err != nil {
 		return "plaintext"
 	}
