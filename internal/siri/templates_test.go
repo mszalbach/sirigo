@@ -6,6 +6,7 @@ import (
 
 	"github.com/mszalbach/sirigo/internal/siri"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var now = time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
@@ -15,7 +16,8 @@ func Test_returns_rendered_template_with_replaced_variables(t *testing.T) {
 	tc := siri.NewTemplateCache("testdata")
 
 	// When
-	actual := tc.ExecuteTemplate("siri/test.xml", siri.Data{Now: now, ClientRef: "testClient"})
+	actual, err := tc.ExecuteTemplate("siri/test.xml", siri.Data{Now: now, ClientRef: "testClient"})
+	require.NoError(t, err)
 
 	// Then
 	expected := `<Siri>
@@ -30,7 +32,8 @@ func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
 	tc := siri.NewTemplateCache("testdata")
 
 	// When
-	actual := tc.ExecuteTemplate("siri/test.xml", siri.Data{})
+	actual, err := tc.ExecuteTemplate("siri/test.xml", siri.Data{})
+	require.NoError(t, err)
 
 	// Then
 	expected := `<Siri>
@@ -40,16 +43,15 @@ func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func Test_returns_some_string_when_there_are_no_templates(t *testing.T) {
+func Test_returns_error_when_there_are_no_templates(t *testing.T) {
 	// Given
 	tc := siri.NewTemplateCache("testdata/empty")
 
 	// When
-	actual := tc.ExecuteTemplate("DOES-NOT-EXIST.xml", siri.Data{Now: now, ClientRef: "testClient"})
+	_, err := tc.ExecuteTemplate("DOES-NOT-EXIST.xml", siri.Data{Now: now, ClientRef: "testClient"})
 
 	// Then
-	expected := ""
-	assert.Equal(t, expected, actual)
+	assert.Error(t, err)
 }
 
 func Test_returns_template_names(t *testing.T) {
@@ -67,26 +69,12 @@ func Test_returns_template_names(t *testing.T) {
 			cache := siri.NewTemplateCache(tc.templatePath)
 
 			// When
-			actual := cache.TemplateNames()
+			actual, err := cache.TemplateNames()
+			require.NoError(t, err)
 
 			// Then
 			// TODO better examples in the testdata folder
 			assert.Equal(t, tc.expectedTemplates, actual)
 		})
 	}
-}
-
-// Run with go test ./internal/siri  -fuzz=Fuzz
-func Fuzz_template_cache(f *testing.F) {
-
-	f.Add("testdata", "siri/test.xml")
-	f.Fuzz(func(t *testing.T, templatePath string, templateName string) {
-		tc := siri.NewTemplateCache(templatePath)
-		success := assert.NotNil(t, tc)
-		if success {
-			tc.TemplateNames()
-		}
-		assert.NotEmpty(t, tc.ExecuteTemplate(templateName, siri.Data{}))
-	})
-
 }

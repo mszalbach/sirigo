@@ -50,18 +50,27 @@ func main() {
 	// TODO: free up ctrl+c for ctrl+q and implement copy functionality
 	app.EnablePaste(true)
 
-	dropdown := tview.NewDropDown().
-		SetLabel("Templates: ").
-		SetOptions(tc.TemplateNames(), nil)
+	dropdown := tview.NewDropDown().SetLabel("Templates: ")
+
+	templateNames, err := tc.TemplateNames()
+	if err == nil {
+		dropdown.SetOptions(templateNames, nil)
+	}
+
 	dropdown.SetSelectedFunc(func(text string, index int) {
-		et := tc.ExecuteTemplate(text, siri.Data{Now: time.Now(), ClientRef: cfg.clientRef})
+		et, err := tc.ExecuteTemplate(text, siri.Data{Now: time.Now(), ClientRef: cfg.clientRef})
+
+		if err != nil {
+			bodyInput.SetText(err.Error(), false)
+			return
+		}
 		bodyInput.SetText(et, false)
 	})
 
 	sendFlex := tview.NewFlex().SetDirection(tview.FlexRow).AddItem(urlInput, 2, 0, true).AddItem(dropdown, 2, 0, false).AddItem(bodyInput, 0, 1, false)
 	appFlex := tview.NewFlex().AddItem(sendFlex, 0, 1, false).AddItem(responseView, 0, 1, false)
 
-	// TODO: the GUI can end and the server will still run. Not sure if this is a problem?
+	// TODO: the GUI can end and the server will still run
 	var g errgroup.Group
 
 	app.SetRoot(appFlex, true).SetFocus(urlInput)

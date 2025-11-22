@@ -29,31 +29,30 @@ var funcs = template.FuncMap{
 	},
 }
 
-func (tc TemplateCache) ExecuteTemplate(name string, data Data) string {
-	// TODO: improve error handling
+func (tc TemplateCache) ExecuteTemplate(name string, data Data) (string, error) {
 	templateFile := filepath.Join(tc.root, name)
 	content, err := os.ReadFile(templateFile) //nolint gosec
 	if err != nil {
 		slog.Error("Could not read template file", slog.String("file", templateFile), slog.Any("error", err))
-		return ""
+		return "", err
 	}
 	t, err := template.New(name).Funcs(funcs).Parse(string(content))
 
 	if err != nil {
 		slog.Error("Could not create template", slog.String("name", name), slog.Any("error", err))
-		return ""
+		return "", err
 	}
 
 	var bytesBuffer bytes.Buffer
 	terr := t.ExecuteTemplate(&bytesBuffer, name, data)
 	if terr != nil {
 		slog.Error("Could not execute template", slog.String("name", name), slog.Any("error", terr))
-		return ""
+		return "", err
 	}
-	return bytesBuffer.String()
+	return bytesBuffer.String(), nil
 }
 
-func (tc TemplateCache) TemplateNames() []string {
+func (tc TemplateCache) TemplateNames() ([]string, error) {
 	root := filepath.Clean(tc.root)
 
 	var templateNames []string
@@ -74,9 +73,8 @@ func (tc TemplateCache) TemplateNames() []string {
 	})
 
 	if err != nil {
-		slog.Error("Could not gather template names", slog.String("root", tc.root), slog.Any("error", err))
-		return nil
+		return nil, err
 	}
 
-	return templateNames
+	return templateNames, nil
 }
