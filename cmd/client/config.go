@@ -7,6 +7,7 @@ type config struct {
 	clientRef   string
 	clientPort  string
 	templateDir string
+	logFile     string
 }
 
 func loadConfig() config {
@@ -15,6 +16,7 @@ func loadConfig() config {
 	flag.StringVar(&cfg.clientRef, "clientref", "client", "Client Reference to use in requests")
 	flag.StringVar(&cfg.clientPort, "port", ":8000", "Port where the client is listening for incoming requests")
 	flag.StringVar(&cfg.templateDir, "templates", "templates", "Folder where SIRI request templates are stored")
+	flag.StringVar(&cfg.logFile, "log", "sirigo.log", "Location of the log file")
 
 	flag.Parse()
 

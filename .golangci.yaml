@@ -7,6 +7,8 @@ linters:
     - importas
     - modernize
     - testpackage
+    - loggercheck
+    - sloglint
   exclusions:
     rules:
       - linters: [errcheck]

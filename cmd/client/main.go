@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -10,13 +12,16 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-type Data struct {
-	Now       string
-	ClientRef string
-}
-
 func main() {
+
 	cfg := loadConfig()
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	file, err := os.OpenFile(cfg.logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	slog.SetDefault(logger)
 
 	siriClient := siri.NewClient(cfg.clientPort)
 	ui.InitStyles()

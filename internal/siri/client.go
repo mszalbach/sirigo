@@ -3,6 +3,7 @@ package siri
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"mime"
 	"net/http"
 	"strings"
@@ -101,7 +102,7 @@ func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(c.AutoClientResponse.Status)
 	_, ferr := fmt.Fprint(w, c.AutoClientResponse.Body)
 	if ferr != nil {
-		//TODO logging
+		slog.Error("Could not write auto response", slog.Any("error", err))
 	}
 }
 

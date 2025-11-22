@@ -48,7 +48,7 @@ func Test_returns_some_string_when_there_are_no_templates(t *testing.T) {
 	actual := tc.ExecuteTemplate("DOES-NOT-EXIST.xml", siri.Data{Now: now, ClientRef: "testClient"})
 
 	// Then
-	expected := "open testdata/empty/DOES-NOT-EXIST.xml: no such file or directory"
+	expected := ""
 	assert.Equal(t, expected, actual)
 }
 
