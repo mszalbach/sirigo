@@ -8,6 +8,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// copied from k9s dracula style
 var colors = map[string]tcell.Color{
 	"foreground": tcell.GetColor("#f8f8f2"),
 	"background": tcell.GetColor("#282a36"),
