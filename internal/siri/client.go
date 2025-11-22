@@ -53,7 +53,7 @@ var client http.Client = http.Client{Timeout: 10 * time.Second}
 func (c Client) Send(url string, body string) ServerResponse {
 	res, err := client.Post(url, "application/xml", strings.NewReader(body))
 	if err != nil {
-		return ServerResponse{Body: err.Error(), Status: res.StatusCode, Language: "plaintext"}
+		return ServerResponse{Body: err.Error(), Status: http.StatusBadRequest, Language: "plaintext"}
 	}
 	defer res.Body.Close()
 	bytesBody, err := io.ReadAll(res.Body)
