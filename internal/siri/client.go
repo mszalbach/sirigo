@@ -36,7 +36,7 @@ type ServerRequest struct {
 }
 
 func NewClient(address string) Client {
-	serverRequest := make(chan ServerRequest, 1)
+	serverRequest := make(chan ServerRequest, 5)
 	return Client{
 		address:             address,
 		ServerRequest:       serverRequest,
@@ -88,6 +88,7 @@ func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 			Language:      "plaintext",
 		}
 		c.serverRequestWriter <- request
+		return
 	}
 
 	request := ServerRequest{

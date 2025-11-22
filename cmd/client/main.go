@@ -15,11 +15,11 @@ import (
 func main() {
 
 	cfg := loadConfig()
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	file, err := os.OpenFile(cfg.logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	if err != nil {
 		panic(err)
 	}
+	logger := slog.New(slog.NewJSONHandler(file, nil))
 	defer file.Close()
 	slog.SetDefault(logger)
 

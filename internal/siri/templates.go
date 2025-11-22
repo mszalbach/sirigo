@@ -14,8 +14,8 @@ type TemplateCache struct {
 	root string
 }
 
-func NewTemplateCache(templatePath string) *TemplateCache {
-	return &TemplateCache{root: templatePath}
+func NewTemplateCache(templatePath string) TemplateCache {
+	return TemplateCache{root: templatePath}
 }
 
 type Data struct {
@@ -47,7 +47,7 @@ func (tc TemplateCache) ExecuteTemplate(name string, data Data) string {
 	var bytesBuffer bytes.Buffer
 	terr := t.ExecuteTemplate(&bytesBuffer, name, data)
 	if terr != nil {
-		slog.Error("Could not execute template", slog.String("name", name), slog.Any("error", err))
+		slog.Error("Could not execute template", slog.String("name", name), slog.Any("error", terr))
 		return ""
 	}
 	return bytesBuffer.String()
@@ -63,7 +63,10 @@ func (tc TemplateCache) TemplateNames() []string {
 		}
 		if d.Type().IsRegular() {
 			if strings.HasSuffix(d.Name(), ".xml") {
-				f, _ := filepath.Rel(root, path)
+				f, err := filepath.Rel(root, path)
+				if err != nil {
+					return err
+				}
 				templateNames = append(templateNames, f)
 			}
 		}
