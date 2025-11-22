@@ -60,7 +60,7 @@ func (c Client) Send(url string, body string) ServerResponse {
 	if err != nil {
 		return ServerResponse{Body: "", Status: res.StatusCode, Language: "plaintext"}
 	}
-	return ServerResponse{Body: string(bytesBody), Status: res.StatusCode, Language: getLanguage(res.Header.Get("content-type"))}
+	return ServerResponse{Body: string(bytesBody), Status: res.StatusCode, Language: getLanguage(res.Header.Get("Content-Type"))}
 }
 
 func (c Client) ListenAndServe() error {
@@ -94,7 +94,7 @@ func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 		RemoteAddress: r.RemoteAddr,
 		Url:           r.URL.RequestURI(),
 		Body:          string(bytesBody),
-		Language:      getLanguage(r.Header.Get("content-type")),
+		Language:      getLanguage(r.Header.Get("Content-Type")),
 	}
 
 	c.serverRequestWriter <- request

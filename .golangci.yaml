@@ -9,6 +9,9 @@ linters:
     - testpackage
     - loggercheck
     - sloglint
+    - canonicalheader
+    - gocritic
+
   exclusions:
     rules:
       - linters: [errcheck]

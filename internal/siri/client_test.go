@@ -16,7 +16,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 	// Given
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		assert.Equal(t, "/siri/2.1/situation-exchange", req.URL.String())
-		rw.Header().Set("content-type", "application/xml")
+		rw.Header().Set("Content-Type", "application/xml")
 		rw.WriteHeader(http.StatusOK)
 		_, err := fmt.Fprint(rw, `
 <Siri>
@@ -36,7 +36,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 	}))
 	defer server.Close()
 
-	//When
+	// When
 	client := NewClient("IMPORTANT")
 	actual := client.Send(server.URL+"/siri/2.1/situation-exchange", `
 <Siri>
@@ -51,7 +51,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 	</ServiceRequest>
 </Siri>`)
 
-	//Then
+	// Then
 	expected := ServerResponse{Body: `
 <Siri>
 	<SubscriptionResponse>
@@ -73,7 +73,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 }
 
 func Test_siri_client_receiving_from_server(t *testing.T) {
-	//Given
+	// Given
 	client := NewClient("NOT IMPORTANT")
 	client.AutoClientResponse.Body = `
 <Siri>
@@ -84,7 +84,7 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 	</DataReadyAcknowledgement>
 </Siri>`
 
-	//When
+	// When
 	serverRequest, _ := http.NewRequest(http.MethodPost, "/siri", strings.NewReader(`
 <Siri>
 	<DataReadyNotification>
@@ -93,13 +93,13 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 	</DataReadyNotification>
 </Siri>`))
 	serverRequest.RemoteAddr = "196.4.4.1"
-	serverRequest.Header.Set("content-type", "application/xml")
+	serverRequest.Header.Set("Content-Type", "application/xml")
 
 	response := httptest.NewRecorder()
 
 	client.createHandler().ServeHTTP(response, serverRequest)
 
-	//Then
+	// Then
 	assert.Equal(t, http.StatusOK, response.Result().StatusCode)
 
 	expectedClientResponse := `
@@ -151,11 +151,11 @@ func Test_client_send_returns_server_responses(t *testing.T) {
 			}))
 			defer server.Close()
 
-			//When
+			// When
 			client := NewClient("LISTENER NOT IMPORTANT")
 			actual := client.Send(server.URL+"/siri/v2", "IGNORE")
 
-			//Then
+			// Then
 			expected := ServerResponse{Body: ``, Language: "plaintext", Status: tc.expectedStatus}
 			assert.Equal(t, expected, actual)
 		})
@@ -179,16 +179,16 @@ func Test_client_send_understands_content_types(t *testing.T) {
 			// Given
 			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 				assert.Equal(t, "/siri/v2", req.URL.String())
-				rw.Header().Set("content-type", tc.actualContentType)
+				rw.Header().Set("Content-Type", tc.actualContentType)
 				rw.WriteHeader(http.StatusOK)
 			}))
 			defer server.Close()
 
-			//When
+			// When
 			client := NewClient("NOT IMPORTANT")
 			actual := client.Send(server.URL+"/siri/v2", "IGNORE")
 
-			//Then
+			// Then
 			expected := ServerResponse{Body: ``, Language: tc.expectedLanguage, Status: http.StatusOK}
 			assert.Equal(t, expected, actual)
 		})
@@ -199,10 +199,10 @@ func Test_server_does_not_work_for_non_post(t *testing.T) {
 	testCases := []string{http.MethodGet, http.MethodPut, http.MethodHead}
 	for _, tc := range testCases {
 		t.Run(tc, func(t *testing.T) {
-			//Given
+			// Given
 			client := NewClient("NOT IMPORTANT")
 
-			//When
+			// When
 			request, _ := http.NewRequest(tc, "/players/Floyd", strings.NewReader(`
 <Siri>
 	<DataReadyNotification>
@@ -213,7 +213,7 @@ func Test_server_does_not_work_for_non_post(t *testing.T) {
 			response := httptest.NewRecorder()
 			client.createHandler().ServeHTTP(response, request)
 
-			//Then
+			// Then
 			assert.Equal(t, http.StatusMethodNotAllowed, response.Result().StatusCode)
 			assert.Empty(t, client.ServerRequest)
 		})

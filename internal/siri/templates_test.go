@@ -70,7 +70,7 @@ func Test_returns_template_names(t *testing.T) {
 			actual := cache.TemplateNames()
 
 			// Then
-			//TODO better examples in the testdata folder
+			// TODO better examples in the testdata folder
 			assert.Equal(t, tc.expectedTemplates, actual)
 		})
 	}
