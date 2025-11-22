@@ -67,7 +67,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 	</SubscriptionResponse>
 </Siri>`,
 		Language: "xml",
-		Status:   "200 OK"}
+		Status:   http.StatusOK}
 	assert.Equal(t, expected, actual)
 
 }
@@ -75,6 +75,14 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 func Test_siri_client_receiving_from_server(t *testing.T) {
 	//Given
 	client := NewClient("NOT IMPORTANT")
+	client.AutoClientResponse.Body = `
+<Siri>
+	<DataReadyAcknowledgement>
+		<ResponseTimestamp>2004-12-17T09:30:47-05:00</ResponseTimestamp>
+		<ConsumerRef>NADER</ConsumerRef>
+		<Status>true</Status>
+	</DataReadyAcknowledgement>
+</Siri>`
 
 	//When
 	serverRequest, _ := http.NewRequest(http.MethodPost, "/siri", strings.NewReader(`
@@ -93,6 +101,16 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 
 	//Then
 	assert.Equal(t, http.StatusOK, response.Result().StatusCode)
+
+	expectedClientResponse := `
+<Siri>
+	<DataReadyAcknowledgement>
+		<ResponseTimestamp>2004-12-17T09:30:47-05:00</ResponseTimestamp>
+		<ConsumerRef>NADER</ConsumerRef>
+		<Status>true</Status>
+	</DataReadyAcknowledgement>
+</Siri>`
+	assert.Equal(t, expectedClientResponse, response.Body.String())
 
 	require.Len(t, client.ServerRequest, 1)
 	actualServerRequest := <-client.ServerRequest
@@ -117,11 +135,11 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 func Test_client_send_returns_server_responses(t *testing.T) {
 	testCases := []struct {
 		actualStatus   int
-		expectedStatus string
+		expectedStatus int
 	}{
-		{http.StatusOK, "200 OK"},
-		{http.StatusInternalServerError, "500 Internal Server Error"},
-		{http.StatusNotFound, "404 Not Found"},
+		{http.StatusOK, http.StatusOK},
+		{http.StatusInternalServerError, http.StatusInternalServerError},
+		{http.StatusNotFound, http.StatusNotFound},
 	}
 
 	for _, tc := range testCases {
@@ -171,7 +189,7 @@ func Test_client_send_understands_content_types(t *testing.T) {
 			actual := client.Send(server.URL+"/siri/v2", "IGNORE")
 
 			//Then
-			expected := ServerResponse{Body: ``, Language: tc.expectedLanguage, Status: "200 OK"}
+			expected := ServerResponse{Body: ``, Language: tc.expectedLanguage, Status: http.StatusOK}
 			assert.Equal(t, expected, actual)
 		})
 	}
