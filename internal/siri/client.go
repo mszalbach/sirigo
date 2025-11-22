@@ -10,19 +10,19 @@ import (
 	"time"
 )
 
-type Client struct {
+type client struct {
 	address             string
 	ServerRequest       <-chan ServerRequest
 	serverRequestWriter chan ServerRequest
-	AutoClientResponse  *AutoClientResponse
+	AutoClientResponse  *autoClientResponse
 }
 
-type AutoClientResponse struct {
+type autoClientResponse struct {
 	Body   string
 	Status int
 }
 
-type ServerResponse struct {
+type serverResponse struct {
 	Body     string
 	Status   int
 	Language string
@@ -35,35 +35,35 @@ type ServerRequest struct {
 	Language      string
 }
 
-func NewClient(address string) Client {
+func NewClient(address string) client {
 	serverRequest := make(chan ServerRequest, 5)
-	return Client{
+	return client{
 		address:             address,
 		ServerRequest:       serverRequest,
 		serverRequestWriter: serverRequest,
-		AutoClientResponse: &AutoClientResponse{
+		AutoClientResponse: &autoClientResponse{
 			Body:   "",
 			Status: http.StatusOK,
 		},
 	}
 }
 
-var client http.Client = http.Client{Timeout: 10 * time.Second}
+var httpclient http.Client = http.Client{Timeout: 10 * time.Second}
 
-func (c Client) Send(url string, body string) ServerResponse {
-	res, err := client.Post(url, "application/xml", strings.NewReader(body))
+func (c client) Send(url string, body string) serverResponse {
+	res, err := httpclient.Post(url, "application/xml", strings.NewReader(body))
 	if err != nil {
-		return ServerResponse{Body: err.Error(), Status: http.StatusBadRequest, Language: "plaintext"}
+		return serverResponse{Body: err.Error(), Status: http.StatusBadRequest, Language: "plaintext"}
 	}
 	defer res.Body.Close()
 	bytesBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		return ServerResponse{Body: "", Status: res.StatusCode, Language: "plaintext"}
+		return serverResponse{Body: "", Status: res.StatusCode, Language: "plaintext"}
 	}
-	return ServerResponse{Body: string(bytesBody), Status: res.StatusCode, Language: getLanguage(res.Header.Get("Content-Type"))}
+	return serverResponse{Body: string(bytesBody), Status: res.StatusCode, Language: getLanguage(res.Header.Get("Content-Type"))}
 }
 
-func (c Client) ListenAndServe() error {
+func (c client) ListenAndServe() error {
 	server := &http.Server{
 		Addr:              c.address,
 		ReadHeaderTimeout: 5 * time.Second,
@@ -72,13 +72,13 @@ func (c Client) ListenAndServe() error {
 	return server.ListenAndServe()
 }
 
-func (c Client) createHandler() *http.ServeMux {
+func (c client) createHandler() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /", c.handleServerRequests)
 	return mux
 }
 
-func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
+func (c client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 	bytesBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		request := ServerRequest{

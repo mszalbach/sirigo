@@ -10,12 +10,12 @@ import (
 	"time"
 )
 
-type TemplateCache struct {
+type templateCache struct {
 	root string
 }
 
-func NewTemplateCache(templatePath string) TemplateCache {
-	return TemplateCache{root: templatePath}
+func NewTemplateCache(templatePath string) templateCache {
+	return templateCache{root: templatePath}
 }
 
 type Data struct {
@@ -29,7 +29,7 @@ var funcs = template.FuncMap{
 	},
 }
 
-func (tc TemplateCache) ExecuteTemplate(name string, data Data) (string, error) {
+func (tc templateCache) ExecuteTemplate(name string, data Data) (string, error) {
 	templateFile := filepath.Join(tc.root, name)
 	content, err := os.ReadFile(templateFile) //nolint gosec
 	if err != nil {
@@ -52,7 +52,7 @@ func (tc TemplateCache) ExecuteTemplate(name string, data Data) (string, error) 
 	return bytesBuffer.String(), nil
 }
 
-func (tc TemplateCache) TemplateNames() ([]string, error) {
+func (tc templateCache) TemplateNames() ([]string, error) {
 	root := filepath.Clean(tc.root)
 
 	var templateNames []string

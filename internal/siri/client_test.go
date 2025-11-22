@@ -52,7 +52,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 </Siri>`)
 
 	// Then
-	expected := ServerResponse{Body: `
+	expected := serverResponse{Body: `
 <Siri>
 	<SubscriptionResponse>
 		<ResponseTimestamp>2004-12-17T09:30:47-05:00</ResponseTimestamp>
@@ -156,7 +156,7 @@ func Test_client_send_returns_server_responses(t *testing.T) {
 			actual := client.Send(server.URL+"/siri/v2", "IGNORE")
 
 			// Then
-			expected := ServerResponse{Body: ``, Language: "plaintext", Status: tc.expectedStatus}
+			expected := serverResponse{Body: ``, Language: "plaintext", Status: tc.expectedStatus}
 			assert.Equal(t, expected, actual)
 		})
 	}
@@ -189,7 +189,7 @@ func Test_client_send_understands_content_types(t *testing.T) {
 			actual := client.Send(server.URL+"/siri/v2", "IGNORE")
 
 			// Then
-			expected := ServerResponse{Body: ``, Language: tc.expectedLanguage, Status: http.StatusOK}
+			expected := serverResponse{Body: ``, Language: tc.expectedLanguage, Status: http.StatusOK}
 			assert.Equal(t, expected, actual)
 		})
 	}
