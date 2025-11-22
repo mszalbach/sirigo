@@ -9,7 +9,7 @@ If you want to know more about the architecture and framework decisions, check o
 
 ## Installation
 
-You need Go 1.25.
+You need Go 1.25 and golangci-lint installed.
 
 ```bash
 make build

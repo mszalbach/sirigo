@@ -2,7 +2,7 @@ package siri
 
 import (
 	"bytes"
-	"log/slog"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -33,20 +33,17 @@ func (tc templateCache) ExecuteTemplate(name string, data Data) (string, error) 
 	templateFile := filepath.Join(tc.root, name)
 	content, err := os.ReadFile(templateFile) //nolint gosec
 	if err != nil {
-		slog.Error("Could not read template file", slog.String("file", templateFile), slog.Any("error", err))
-		return "", err
+		return "", fmt.Errorf("could not read template file %s: %w", templateFile, err)
 	}
 	t, err := template.New(name).Funcs(funcs).Parse(string(content))
 	if err != nil {
-		slog.Error("Could not create template", slog.String("name", name), slog.Any("error", err))
-		return "", err
+		return "", fmt.Errorf("could not create template %s: %w", name, err)
 	}
 
 	var bytesBuffer bytes.Buffer
 	terr := t.ExecuteTemplate(&bytesBuffer, name, data)
 	if terr != nil {
-		slog.Error("Could not execute template", slog.String("name", name), slog.Any("error", terr))
-		return "", err
+		return "", fmt.Errorf("could not execute template %s: %w", name, err)
 	}
 	return bytesBuffer.String(), nil
 }
@@ -74,7 +71,7 @@ func (tc templateCache) TemplateNames() ([]string, error) {
 		},
 	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not get template names from %s: %w", root, err)
 	}
 
 	return templateNames, nil

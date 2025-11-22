@@ -58,6 +58,7 @@ func main() {
 
 	dropdown.SetSelectedFunc(func(text string, index int) {
 		et, err := tc.ExecuteTemplate(text, siri.Data{Now: time.Now(), ClientRef: cfg.clientRef})
+		//TODO better error handling
 		if err != nil {
 			bodyInput.SetText(err.Error(), false)
 			return
