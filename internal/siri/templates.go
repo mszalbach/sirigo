@@ -28,7 +28,7 @@ var funcs = template.FuncMap{
 		return now.Format(time.RFC3339)
 	},
 	"addTime": func(now time.Time, duration string) time.Time {
-		var dur, err = time.ParseDuration(duration)
+		dur, err := time.ParseDuration(duration)
 		if err != nil {
 			return now
 		}
