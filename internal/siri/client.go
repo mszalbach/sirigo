@@ -50,21 +50,21 @@ func NewClient(address string) client {
 
 var httpclient http.Client = http.Client{Timeout: 10 * time.Second}
 
-func (c client) Send(url string, body string) serverResponse {
+func (c client) Send(url string, body string) (serverResponse, error) {
 	res, err := httpclient.Post(url, "application/xml", strings.NewReader(body))
 	if err != nil {
-		return serverResponse{Body: err.Error(), Status: http.StatusBadRequest, Language: "plaintext"}
+		return serverResponse{}, err
 	}
 	defer res.Body.Close()
 	bytesBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		return serverResponse{Body: "", Status: res.StatusCode, Language: "plaintext"}
+		return serverResponse{}, err
 	}
 	return serverResponse{
 		Body:     string(bytesBody),
 		Status:   res.StatusCode,
 		Language: getLanguage(res.Header.Get("Content-Type")),
-	}
+	}, nil
 }
 
 func (c client) ListenAndServe() error {

@@ -38,7 +38,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 
 	// When
 	client := NewClient("IMPORTANT")
-	actual := client.Send(server.URL+"/siri/2.1/situation-exchange", `
+	actual, err := client.Send(server.URL+"/siri/2.1/situation-exchange", `
 <Siri>
 	<ServiceRequest>
 		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
@@ -50,6 +50,8 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 		</SituationExchangeRequest>
 	</ServiceRequest>
 </Siri>`)
+
+	require.NoError(t, err)
 
 	// Then
 	expected := serverResponse{
@@ -153,7 +155,8 @@ func Test_client_send_returns_server_responses(t *testing.T) {
 
 			// When
 			client := NewClient("LISTENER NOT IMPORTANT")
-			actual := client.Send(server.URL+"/siri/v2", "IGNORE")
+			actual, err := client.Send(server.URL+"/siri/v2", "IGNORE")
+			require.NoError(t, err)
 
 			// Then
 			expected := serverResponse{Body: ``, Language: "plaintext", Status: tc.expectedStatus}
@@ -185,7 +188,8 @@ func Test_client_send_understands_content_types(t *testing.T) {
 
 			// When
 			client := NewClient("NOT IMPORTANT")
-			actual := client.Send(server.URL+"/siri/v2", "IGNORE")
+			actual, err := client.Send(server.URL+"/siri/v2", "IGNORE")
+			require.NoError(t, err)
 
 			// Then
 			expected := serverResponse{Body: ``, Language: tc.expectedLanguage, Status: http.StatusOK}
