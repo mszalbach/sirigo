@@ -1,5 +1,4 @@
-<!-- (C) Copyright 2005-2014 CEN SIRI -->
-<Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0">
+<Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1">
 	<TerminateSubscriptionRequest>
 		<RequestTimestamp>{{ dateTime .Now }}</RequestTimestamp>
 		<RequestorRef>{{ .ClientRef }}</RequestorRef>
