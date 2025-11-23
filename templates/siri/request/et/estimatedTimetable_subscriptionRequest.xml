@@ -1,0 +1,24 @@
+<!-- (C) Copyright 2005-2012 CEN SIRI -->
+<Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0">
+	<SubscriptionRequest>
+		<RequestTimestamp>{{ dateTime .Now }}</RequestTimestamp>
+		<RequestorRef>{{ .ClientRef }}</RequestorRef>
+		<EstimatedTimetableSubscriptionRequest>
+			<SubscriberRef>{{ .ClientRef }}</SubscriberRef>
+			<SubscriptionIdentifier>1</SubscriptionIdentifier>
+			<InitialTerminationTime>{{ dateTime (addTime .Now "2h") }}</InitialTerminationTime>
+			<EstimatedTimetableRequest version="2.0">
+				<RequestTimestamp>{{ dateTime .Now }}</RequestTimestamp>
+				<PreviewInterval>PT60M</PreviewInterval>
+				<OperatorRef>SMOOTH</OperatorRef>
+				<!-- <Lines>
+					<LineDirection>
+						<LineRef></LineRef>
+						<DirectionRef></DirectionRef>
+					</LineDirection>
+				</Lines> -->
+			</EstimatedTimetableRequest>
+			<ChangeBeforeUpdates>PT5M</ChangeBeforeUpdates>
+		</EstimatedTimetableSubscriptionRequest>
+	</SubscriptionRequest>
+</Siri>
