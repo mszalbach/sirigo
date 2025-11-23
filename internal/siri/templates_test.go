@@ -22,6 +22,7 @@ func Test_returns_rendered_template_with_replaced_variables(t *testing.T) {
 	// Then
 	expected := `<Siri>
   <time>2024-06-01T12:00:00Z</time>
+  <futureTime>2024-06-01T12:05:00Z<futureTime>
   <client>testClient</client>
 </Siri>`
 	assert.Equal(t, expected, actual)
@@ -38,6 +39,7 @@ func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
 	// Then
 	expected := `<Siri>
   <time>0001-01-01T00:00:00Z</time>
+  <futureTime>0001-01-01T00:05:00Z<futureTime>
   <client></client>
 </Siri>`
 	assert.Equal(t, expected, actual)

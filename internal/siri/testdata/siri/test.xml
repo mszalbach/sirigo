@@ -1,4 +1,5 @@
 <Siri>
   <time>{{ dateTime .Now }}</time>
+  <futureTime>{{ dateTime (addTime .Now "5m") }}<futureTime>
   <client>{{ .ClientRef }}</client>
 </Siri>

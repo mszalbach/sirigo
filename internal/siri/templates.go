@@ -27,6 +27,13 @@ var funcs = template.FuncMap{
 	"dateTime": func(now time.Time) string {
 		return now.Format(time.RFC3339)
 	},
+	"addTime": func(now time.Time, duration string) time.Time {
+		var dur, err = time.ParseDuration(duration)
+		if err != nil {
+			return now
+		}
+		return now.Add(dur)
+	},
 }
 
 func (tc templateCache) ExecuteTemplate(name string, data Data) (string, error) {
