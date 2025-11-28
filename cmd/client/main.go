@@ -1,4 +1,4 @@
-// Package main tarts the TUI and everything needed to privde a SIRI client
+// Package main starts the TUI and everything needed to provide a SIRI client
 package main
 
 import (

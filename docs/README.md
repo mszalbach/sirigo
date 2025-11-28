@@ -1,6 +1,6 @@
 # Introduction
 
-The architecture documentation follows a pragmatic approach. Normally an [Arc42 documentation](https://arc42.org/) would be the way to go, but for this personal project it is sufficient to focus on [C4 diagrams](https://c4model.com/) and [ADRs](https://adr.github.io/).
+The architecture documentation follows a pragmatic approach. Normally, an [Arc42 documentation](https://arc42.org/) would be the way to go, but for this personal project, it is sufficient to focus on [C4 diagrams](https://c4model.com/) and [ADRs](https://adr.github.io/).
 
 # Context
 
@@ -94,7 +94,7 @@ accepted
 
 ### Context
 
-The SIRI protocol introduces bidirectional communication: the client may need to accept inbound requests or push notifications, not only send requests. For testing against real SIRI servers and for quick interactive debugging, an interactive UI is useful. The primary goal remains to learn Go rather than building a full-featured desktop or web application.
+The SIRI protocol introduces bidirectional communication: the client may need to accept inbound requests or push notifications, not just send requests. For testing against real SIRI servers and for quick interactive debugging, an interactive UI is useful. The primary goal remains to learn Go rather than building a full-featured desktop or web application.
 
 ### Decision
 

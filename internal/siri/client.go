@@ -1,4 +1,4 @@
-// Package siri contains everyhting to handle SIRI communication
+// Package siri contains everything to handle SIRI communication
 package siri
 
 import (
