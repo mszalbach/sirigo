@@ -22,7 +22,7 @@ var colors = map[string]tcell.Color{
 
 const codeStyle = "dracula"
 
-func InitStyles() {
+func initStyles() {
 	tview.Styles.PrimaryTextColor = colors["foreground"]
 	tview.Styles.SecondaryTextColor = colors["orange"]
 	tview.Styles.TitleColor = colors["purple"]
@@ -30,15 +30,20 @@ func InitStyles() {
 	tview.Styles.PrimitiveBackgroundColor = colors["background"]
 	tview.Styles.ContrastBackgroundColor = colors["selection"]
 	tview.Styles.ContrastSecondaryTextColor = colors["comment"]
+	tview.Styles.MoreContrastBackgroundColor = colors["purple"]
 
 	// does not change anything currently used
-	tview.Styles.MoreContrastBackgroundColor = tcell.ColorGreen
 	tview.Styles.GraphicsColor = tcell.ColorGreen
 	tview.Styles.TertiaryTextColor = tcell.ColorGreen
 	tview.Styles.InverseTextColor = tcell.ColorGreen
 }
 
-func Highlight(text string, lexer string) string {
+// colorTag convert tcell.Color into color tags used by tview for styling text
+func colorTag(foreground tcell.Color, background tcell.Color) string {
+	return "[" + foreground.CSS() + ":" + background.CSS() + "]"
+}
+
+func highlight(text string, lexer string) string {
 	var buf bytes.Buffer
 	err := quick.Highlight(&buf, text, lexer, "terminal256", codeStyle)
 	if err != nil {

@@ -1,3 +1,4 @@
+// Package siri contains everyhting to handle SIRI communication
 package siri
 
 import (
@@ -10,8 +11,10 @@ import (
 	"time"
 )
 
-type client struct {
+type Client struct {
 	address             string
+	ClientRef           string
+	ServerURL           string
 	ServerRequest       <-chan ServerRequest
 	serverRequestWriter chan ServerRequest
 	AutoClientResponse  *autoClientResponse
@@ -30,14 +33,16 @@ type serverResponse struct {
 
 type ServerRequest struct {
 	RemoteAddress string
-	Url           string
+	URL           string
 	Body          string
 	Language      string
 }
 
-func NewClient(address string) client {
+func NewClient(clientRef string, serverURL string, address string) Client {
 	serverRequest := make(chan ServerRequest, 5)
-	return client{
+	return Client{
+		ClientRef:           clientRef,
+		ServerURL:           serverURL,
 		address:             address,
 		ServerRequest:       serverRequest,
 		serverRequestWriter: serverRequest,
@@ -50,7 +55,7 @@ func NewClient(address string) client {
 
 var httpclient http.Client = http.Client{Timeout: 10 * time.Second}
 
-func (c client) Send(url string, body string) (serverResponse, error) {
+func (c Client) Send(url string, body string) (serverResponse, error) {
 	res, err := httpclient.Post(url, "application/xml", strings.NewReader(body))
 	if err != nil {
 		return serverResponse{}, err
@@ -67,7 +72,7 @@ func (c client) Send(url string, body string) (serverResponse, error) {
 	}, nil
 }
 
-func (c client) ListenAndServe() error {
+func (c Client) ListenAndServe() error {
 	server := &http.Server{
 		Addr:              c.address,
 		ReadHeaderTimeout: 5 * time.Second,
@@ -76,18 +81,18 @@ func (c client) ListenAndServe() error {
 	return server.ListenAndServe()
 }
 
-func (c client) createHandler() *http.ServeMux {
+func (c Client) createHandler() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /", c.handleServerRequests)
 	return mux
 }
 
-func (c client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
+func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 	bytesBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		request := ServerRequest{
 			RemoteAddress: r.RemoteAddr,
-			Url:           r.URL.RequestURI(),
+			URL:           r.URL.RequestURI(),
 			Body:          err.Error(),
 			Language:      "plaintext",
 		}
@@ -97,7 +102,7 @@ func (c client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 
 	request := ServerRequest{
 		RemoteAddress: r.RemoteAddr,
-		Url:           r.URL.RequestURI(),
+		URL:           r.URL.RequestURI(),
 		Body:          string(bytesBody),
 		Language:      getLanguage(r.Header.Get("Content-Type")),
 	}

@@ -37,7 +37,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 	defer server.Close()
 
 	// When
-	client := NewClient("IMPORTANT")
+	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
 	actual, err := client.Send(server.URL+"/siri/2.1/situation-exchange", `
 <Siri>
 	<ServiceRequest>
@@ -77,7 +77,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 
 func Test_siri_client_receiving_from_server(t *testing.T) {
 	// Given
-	client := NewClient("NOT IMPORTANT")
+	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
 	client.AutoClientResponse.Body = `
 <Siri>
 	<DataReadyAcknowledgement>
@@ -120,7 +120,7 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 
 	expectedServerRequest := ServerRequest{
 		RemoteAddress: "196.4.4.1",
-		Url:           "/siri",
+		URL:           "/siri",
 		Language:      "xml",
 		Body: `
 <Siri>
@@ -154,7 +154,7 @@ func Test_client_send_returns_server_responses(t *testing.T) {
 			defer server.Close()
 
 			// When
-			client := NewClient("LISTENER NOT IMPORTANT")
+			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
 			actual, err := client.Send(server.URL+"/siri/v2", "IGNORE")
 			require.NoError(t, err)
 
@@ -187,7 +187,7 @@ func Test_client_send_understands_content_types(t *testing.T) {
 			defer server.Close()
 
 			// When
-			client := NewClient("NOT IMPORTANT")
+			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
 			actual, err := client.Send(server.URL+"/siri/v2", "IGNORE")
 			require.NoError(t, err)
 
@@ -203,7 +203,7 @@ func Test_server_does_not_work_for_non_post(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc, func(t *testing.T) {
 			// Given
-			client := NewClient("NOT IMPORTANT")
+			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
 
 			// When
 			request, _ := http.NewRequest(tc, "/players/Floyd", strings.NewReader(`

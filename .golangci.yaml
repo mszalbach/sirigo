@@ -11,6 +11,10 @@ linters:
     - sloglint
     - canonicalheader
     - gocritic
+    - cyclop
+    - gocritic
+    #TODO later when packages are clear
+    # - revive
 
   exclusions:
     rules:
