@@ -3,11 +3,12 @@ package main
 import "flag"
 
 type config struct {
-	url         string
-	clientRef   string
-	clientPort  string
-	templateDir string
-	logFile     string
+	url             string
+	clientRef       string
+	clientPort      string
+	templateDir     string
+	autoresponseDir string
+	logFile         string
 }
 
 func loadConfig() config {
@@ -20,6 +21,12 @@ func loadConfig() config {
 		"templates",
 		"templates/siri/request",
 		"Folder where SIRI request templates are stored",
+	)
+	flag.StringVar(
+		&cfg.autoresponseDir,
+		"autoresponse",
+		"templates/siri/autoresponse",
+		"Folder where SIRI autoresponse templates are stored",
 	)
 	flag.StringVar(&cfg.logFile, "log", "sirigo.log", "Location of the log file")
 

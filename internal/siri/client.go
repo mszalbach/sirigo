@@ -11,26 +11,30 @@ import (
 	"time"
 )
 
+// Client contains everyhting needed for a SIRI client
 type Client struct {
 	address             string
 	ClientRef           string
 	ServerURL           string
 	ServerRequest       <-chan ServerRequest
 	serverRequestWriter chan ServerRequest
-	AutoClientResponse  *autoClientResponse
+	AutoClientResponse  *AutoClientResponse
 }
 
-type autoClientResponse struct {
+// AutoClientResponse which should be used to answer server requests
+type AutoClientResponse struct {
 	Body   string
 	Status int
 }
 
+// ServerResponse returned when sending requests to the server
 type ServerResponse struct {
 	Body     string
 	Status   int
 	Language string
 }
 
+// ServerRequest the requests the SIRI server sends to the client like DataReady requests
 type ServerRequest struct {
 	RemoteAddress string
 	URL           string
@@ -38,6 +42,7 @@ type ServerRequest struct {
 	Language      string
 }
 
+// NewClient creates a new Client to interact with a SIRI server
 func NewClient(clientRef string, serverURL string, address string) Client {
 	serverRequest := make(chan ServerRequest, 5)
 	return Client{
@@ -46,7 +51,7 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 		address:             address,
 		ServerRequest:       serverRequest,
 		serverRequestWriter: serverRequest,
-		AutoClientResponse: &autoClientResponse{
+		AutoClientResponse: &AutoClientResponse{
 			Body:   "",
 			Status: http.StatusOK,
 		},
@@ -55,6 +60,7 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 
 var httpclient http.Client = http.Client{Timeout: 10 * time.Second}
 
+// Send sends a message to the SIRI server
 func (c Client) Send(url string, body string) (ServerResponse, error) {
 	res, err := httpclient.Post(url, "application/xml", strings.NewReader(body))
 	if err != nil {
@@ -72,6 +78,7 @@ func (c Client) Send(url string, body string) (ServerResponse, error) {
 	}, nil
 }
 
+// ListenAndServe starts the http server needed to listen for SIRI server requests like DataReady requests
 func (c Client) ListenAndServe() error {
 	server := &http.Server{
 		Addr:              c.address,

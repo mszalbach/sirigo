@@ -21,11 +21,11 @@ func main() {
 	slog.SetDefault(logger)
 
 	siriClient := siri.NewClient(cfg.clientRef, cfg.url, cfg.clientPort)
-	tc := siri.NewTemplateCache(cfg.templateDir)
+	clientTemplates := siri.NewTemplateCache(cfg.templateDir)
+	serverTemplates := siri.NewTemplateCache(cfg.autoresponseDir)
 
-	app := ui.NewSiriApp(siriClient, tc, tc)
+	app := ui.NewSiriApp(siriClient, clientTemplates, serverTemplates)
 
-	// TODO: the GUI can end and the server will still run
 	var g errgroup.Group
 	g.Go(siriClient.ListenAndServe)
 	g.Go(app.Run)

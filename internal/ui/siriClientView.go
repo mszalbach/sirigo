@@ -75,10 +75,10 @@ func newSiriClientView(
 	}
 }
 
-func (sv siriClientView) send() siri.ServerResponse {
-	res, err := sv.siriClient.Send(sv.model.url, sv.model.body)
+func (sc siriClientView) send() siri.ServerResponse {
+	res, err := sc.siriClient.Send(sc.model.url, sc.model.body)
 	if err != nil {
-		sv.errorChannel <- err
+		sc.errorChannel <- err
 	}
 	return res
 }
