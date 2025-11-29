@@ -59,7 +59,7 @@ func newSiriClientView(
 			return
 		}
 		urlPath := siri.GetURLPathFromTemplate(et)
-		// no server URL given so just let the user enter everyhting itself
+		// If no server URL is configured, let the user enter the full URL
 		if siriClient.ServerURL != "" {
 			urlInput.SetText(siriClient.ServerURL + urlPath)
 		}

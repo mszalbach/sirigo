@@ -8,7 +8,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-// copied from k9s dracula style
+// Copied from k9s' Dracula style
 var colors = map[string]tcell.Color{
 	"foreground": tcell.GetColor("#f8f8f2"),
 	"background": tcell.GetColor("#282a36"),
@@ -32,13 +32,13 @@ func initStyles() {
 	tview.Styles.ContrastSecondaryTextColor = colors["comment"]
 	tview.Styles.MoreContrastBackgroundColor = colors["purple"]
 
-	// does not change anything currently used
+	// Does not change anything currently used
 	tview.Styles.GraphicsColor = tcell.ColorGreen
 	tview.Styles.TertiaryTextColor = tcell.ColorGreen
 	tview.Styles.InverseTextColor = tcell.ColorGreen
 }
 
-// colorTag convert tcell.Color into color tags used by tview for styling text
+// colorTag converts tcell.Color into color tags used by tview for styling text
 func colorTag(foreground tcell.Color, background tcell.Color) string {
 	return "[" + foreground.CSS() + ":" + background.CSS() + "]"
 }

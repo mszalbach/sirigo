@@ -30,7 +30,7 @@ C4Container
     Container_Boundary(sirigo, "Sirigo") {
         Container(cmdClient, "cmd/client", "Go", "Main entry point that initializes and coordinates the system")
 
-        Component(empty,"helper because mermaid has not real styling yet")   
+        Component(empty,"helper because Mermaid does not have real styling yet")   
          
         Container(uiPkg, "internal/ui", "Go + tview", "Terminal User Interface for interacting with SIRI servers")
 

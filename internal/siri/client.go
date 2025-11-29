@@ -1,4 +1,4 @@
-// Package siri contains everything to handle SIRI communication
+// Package siri contains everything needed to handle SIRI communication
 package siri
 
 import (
@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// Client contains everyhting needed for a SIRI client
+// Client contains everything needed for a SIRI client
 type Client struct {
 	address             string
 	ClientRef           string
@@ -21,7 +21,7 @@ type Client struct {
 	AutoClientResponse  *AutoClientResponse
 }
 
-// AutoClientResponse which should be used to answer server requests
+// AutoClientResponse should be used to answer server requests
 type AutoClientResponse struct {
 	Body   string
 	Status int
@@ -34,7 +34,7 @@ type ServerResponse struct {
 	Language string
 }
 
-// ServerRequest the requests the SIRI server sends to the client like DataReady requests
+// ServerRequest represents the requests the SIRI server sends to the client, such as DataReady requests
 type ServerRequest struct {
 	RemoteAddress string
 	URL           string
@@ -78,7 +78,7 @@ func (c Client) Send(url string, body string) (ServerResponse, error) {
 	}, nil
 }
 
-// ListenAndServe starts the http server needed to listen for SIRI server requests like DataReady requests
+// ListenAndServe starts the HTTP server needed to listen for SIRI server requests such as DataReady requests
 func (c Client) ListenAndServe() error {
 	server := &http.Server{
 		Addr:              c.address,
@@ -119,7 +119,7 @@ func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(c.AutoClientResponse.Status)
 	_, ferr := fmt.Fprint(w, c.AutoClientResponse.Body)
 	if ferr != nil {
-		slog.Error("Could not write auto response", slog.Any("error", err))
+		slog.Error("Could not write auto response", slog.Any("error", ferr))
 	}
 }
 

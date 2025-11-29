@@ -9,7 +9,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-// NewSiriApp creates the tview app to interact with a SIRI server
+// NewSiriApp creates the tview application to interact with a SIRI server
 func NewSiriApp(
 	siriClient siri.Client,
 	sendTemplates siri.TemplateCache,
@@ -21,14 +21,14 @@ func NewSiriApp(
 	app.EnableMouse(true)
 	app.EnablePaste(true)
 
-	// building ui elements
+	// Building UI elements
 	errorChannel := make(chan error, 5)
 	statusBar := newStatusBar(errorChannel)
 	keymap := newKeymap()
 	siriClientView := newSiriClientView(siriClient, sendTemplates, errorChannel)
 	siriServerView := newSiriServerView(siriClient, responseTemplates, errorChannel)
 
-	// building layout
+	// Building layout
 	bodyFlex := tview.NewFlex().
 		AddItem(siriClientView, 0, 1, false).
 		AddItem(siriServerView, 0, 1, false)
@@ -42,12 +42,12 @@ func NewSiriApp(
 		AddItem(footerFlex, 2, 0, false)
 	app.SetRoot(appFlex, true)
 
-	// installing shortcuts
+	// Installing shortcuts
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlX:
 			app.Stop()
-			// not the correct way to shutdown app and webserver, but works for now
+			// Not the correct way to shut down the app and web server, but works for now
 			os.Exit(0)
 		case tcell.KeyCtrlO:
 			response := siriClientView.send()

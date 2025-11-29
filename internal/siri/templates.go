@@ -11,17 +11,17 @@ import (
 	"time"
 )
 
-// TemplateCache used to execute file system templates for SIRI communication
+// TemplateCache is used to execute file-system templates for SIRI communication
 type TemplateCache struct {
 	root string
 }
 
-// NewTemplateCache creates new TemplateCache
+// NewTemplateCache creates a new TemplateCache
 func NewTemplateCache(templatePath string) TemplateCache {
 	return TemplateCache{root: templatePath}
 }
 
-// Data used to render the templates
+// Data is used to render the templates
 type Data struct {
 	Now       time.Time
 	ClientRef string
@@ -40,7 +40,7 @@ var funcs = template.FuncMap{
 	},
 }
 
-// ExecuteTemplate finds the template and executes it with the data provided
+// ExecuteTemplate finds the template and executes it with the provided data
 func (tc TemplateCache) ExecuteTemplate(name string, data Data) (string, error) {
 	templateFile := filepath.Join(tc.root, name)
 	content, err := os.ReadFile(templateFile) //nolint gosec
@@ -55,12 +55,12 @@ func (tc TemplateCache) ExecuteTemplate(name string, data Data) (string, error) 
 	var bytesBuffer bytes.Buffer
 	terr := t.ExecuteTemplate(&bytesBuffer, name, data)
 	if terr != nil {
-		return "", fmt.Errorf("could not execute template %s: %w", name, err)
+		return "", fmt.Errorf("could not execute template %s: %w", name, terr)
 	}
 	return bytesBuffer.String(), nil
 }
 
-// TemplateNames returns all found templates names from the root folder
+// TemplateNames returns all found template names from the root folder
 func (tc TemplateCache) TemplateNames() ([]string, error) {
 	root := filepath.Clean(tc.root)
 

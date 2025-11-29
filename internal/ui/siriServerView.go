@@ -24,7 +24,7 @@ func newSiriServerView(
 	serverRequestTextView := tview.NewTextView()
 	serverRequestTextView.SetDynamicColors(true).SetBorder(true).SetTitle("Server Request")
 
-	autoresponseDropdown := tview.NewDropDown().SetLabel("Client auto response: ")
+	autoresponseDropdown := tview.NewDropDown().SetLabel("Client auto-response: ")
 
 	templateNames, templateErr := responseTemplates.TemplateNames()
 	if templateErr == nil {
@@ -52,7 +52,7 @@ func newSiriServerView(
 		AddItem(serverResponseTextView, 0, 2, false).
 		AddItem(serverRequestTextView, 0, 1, false)
 
-	go listenFoServerRequests(siriClient, serverRequestTextView)
+	go listenForServerRequests(siriClient, serverRequestTextView)
 
 	return siriServerView{
 		Flex:                   siriServerFlex,
@@ -60,7 +60,7 @@ func newSiriServerView(
 	}
 }
 
-func listenFoServerRequests(siriClient siri.Client, serverRequestTextView *tview.TextView) {
+func listenForServerRequests(siriClient siri.Client, serverRequestTextView *tview.TextView) {
 	for req := range siriClient.ServerRequest {
 		body := fmt.Sprintf("<!-- %s%s -->\n%s", req.RemoteAddress, req.URL, req.Body)
 		serverRequestTextView.SetText(tview.TranslateANSI(highlight(body, req.Language)))
