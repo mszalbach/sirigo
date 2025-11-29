@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"text/template"
 	"time"
@@ -87,4 +88,16 @@ func (tc TemplateCache) TemplateNames() ([]string, error) {
 	}
 
 	return templateNames, nil
+}
+
+// GetURLPathFromTemplate finds a comment with an url path
+// used to specify where a SIRI client request should be sent to
+func GetURLPathFromTemplate(template string) string {
+	// Look for <!-- path: /siri/et.xml -->
+	re := regexp.MustCompile(`(?s)<!--\s*path:\s*(.*?)\s*-->`)
+	matches := re.FindStringSubmatch(template)
+	if len(matches) < 2 {
+		return ""
+	}
+	return strings.TrimSpace(matches[1])
 }

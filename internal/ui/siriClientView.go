@@ -58,6 +58,11 @@ func newSiriClientView(
 			errorChannel <- err
 			return
 		}
+		urlPath := siri.GetURLPathFromTemplate(et)
+		// no server URL given so just let the user enter everyhting itself
+		if siriClient.ServerURL != "" {
+			urlInput.SetText(siriClient.ServerURL + urlPath)
+		}
 		bodyInput.SetText(et, false)
 	})
 

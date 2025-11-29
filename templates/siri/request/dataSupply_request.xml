@@ -1,3 +1,4 @@
+<!-- path: /siri/et.xml -->
 <Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1">
 	<DataSupplyRequest>
 		<RequestTimestamp>{{ dateTime .Now }}</RequestTimestamp>
