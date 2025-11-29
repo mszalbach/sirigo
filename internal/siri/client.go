@@ -25,7 +25,7 @@ type autoClientResponse struct {
 	Status int
 }
 
-type serverResponse struct {
+type ServerResponse struct {
 	Body     string
 	Status   int
 	Language string
@@ -55,17 +55,17 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 
 var httpclient http.Client = http.Client{Timeout: 10 * time.Second}
 
-func (c Client) Send(url string, body string) (serverResponse, error) {
+func (c Client) Send(url string, body string) (ServerResponse, error) {
 	res, err := httpclient.Post(url, "application/xml", strings.NewReader(body))
 	if err != nil {
-		return serverResponse{}, err
+		return ServerResponse{}, err
 	}
 	defer res.Body.Close()
 	bytesBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		return serverResponse{}, err
+		return ServerResponse{}, err
 	}
-	return serverResponse{
+	return ServerResponse{
 		Body:     string(bytesBody),
 		Status:   res.StatusCode,
 		Language: getLanguage(res.Header.Get("Content-Type")),

@@ -9,16 +9,18 @@ type statusBar struct {
 	textView *tview.TextView
 }
 
-func newStatusBar() statusBar {
+func newStatusBar(errorChannel chan error) statusBar {
 	textview := tview.NewTextView()
 	textview.SetDynamicColors(true)
+
+	go func() {
+		for err := range errorChannel {
+			textview.SetText("[red]" + err.Error())
+		}
+	}()
 
 	return statusBar{
 		Primitive: textview,
 		textView:  textview,
 	}
-}
-
-func (f statusBar) error(errorMessage string) {
-	f.textView.SetText("[red]" + errorMessage)
 }

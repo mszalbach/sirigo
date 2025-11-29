@@ -54,7 +54,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 	require.NoError(t, err)
 
 	// Then
-	expected := serverResponse{
+	expected := ServerResponse{
 		Body: `
 <Siri>
 	<SubscriptionResponse>
@@ -159,7 +159,7 @@ func Test_client_send_returns_server_responses(t *testing.T) {
 			require.NoError(t, err)
 
 			// Then
-			expected := serverResponse{Body: ``, Language: "plaintext", Status: tc.expectedStatus}
+			expected := ServerResponse{Body: ``, Language: "plaintext", Status: tc.expectedStatus}
 			assert.Equal(t, expected, actual)
 		})
 	}
@@ -192,7 +192,7 @@ func Test_client_send_understands_content_types(t *testing.T) {
 			require.NoError(t, err)
 
 			// Then
-			expected := serverResponse{Body: ``, Language: tc.expectedLanguage, Status: http.StatusOK}
+			expected := ServerResponse{Body: ``, Language: tc.expectedLanguage, Status: http.StatusOK}
 			assert.Equal(t, expected, actual)
 		})
 	}
