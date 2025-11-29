@@ -13,12 +13,16 @@ import (
 
 // TemplateCache is used to execute file-system templates for SIRI communication
 type TemplateCache struct {
-	root string
+	root *os.Root
 }
 
 // NewTemplateCache creates a new TemplateCache
-func NewTemplateCache(templatePath string) TemplateCache {
-	return TemplateCache{root: templatePath}
+func NewTemplateCache(templatePath string) (TemplateCache, error) {
+	root, err := os.OpenRoot(templatePath)
+	if err != nil {
+		return TemplateCache{}, err
+	}
+	return TemplateCache{root: root}, nil
 }
 
 // data is used to render the templates
@@ -42,10 +46,9 @@ var funcs = template.FuncMap{
 
 // GetTemplate returns the content of a template on the filesystem
 func (tc TemplateCache) GetTemplate(name string) (string, error) {
-	templateFile := filepath.Join(tc.root, name)
-	content, err := os.ReadFile(templateFile) //nolint gosec
+	content, err := tc.root.ReadFile(name) //nolint gosec
 	if err != nil {
-		return "", fmt.Errorf("could not read template file %s: %w", templateFile, err)
+		return "", err
 	}
 	return string(content), err
 }
@@ -67,9 +70,8 @@ func executeTemplate(content string, data data) (string, error) {
 
 // TemplateNames returns all found template names from the root folder
 func (tc TemplateCache) TemplateNames() ([]string, error) {
-	root := filepath.Clean(tc.root)
-
 	var templateNames []string
+	root := tc.root.Name()
 	err := filepath.WalkDir(
 		root,
 		func(path string, d os.DirEntry, err error) error {

@@ -21,8 +21,14 @@ func main() {
 	slog.SetDefault(logger)
 
 	siriClient := siri.NewClient(cfg.clientRef, cfg.url, cfg.clientPort)
-	clientTemplates := siri.NewTemplateCache(cfg.templateDir)
-	serverTemplates := siri.NewTemplateCache(cfg.autoresponseDir)
+	clientTemplates, err := siri.NewTemplateCache(cfg.templateDir)
+	if err != nil {
+		panic(err)
+	}
+	serverTemplates, err := siri.NewTemplateCache(cfg.autoresponseDir)
+	if err != nil {
+		panic(err)
+	}
 
 	app := ui.NewSiriApp(siriClient, clientTemplates, serverTemplates)
 

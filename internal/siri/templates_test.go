@@ -1,6 +1,7 @@
 package siri
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -54,7 +55,7 @@ func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func Test_returns_error_when_there_are_no_templates(t *testing.T) {
+func Test_returns_empty_when_there_is_no_templates(t *testing.T) {
 	// Given
 	template := ""
 	data := data{Now: now, ClientRef: "testClient"}
@@ -79,7 +80,8 @@ func Test_returns_template_names(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.templatePath, func(t *testing.T) {
 			// Given
-			cache := NewTemplateCache(tc.templatePath)
+			cache, err := NewTemplateCache(tc.templatePath)
+			require.NoError(t, err)
 
 			// When
 			actual, err := cache.TemplateNames()
@@ -113,4 +115,51 @@ func Test_can_extract_url_paths_from_strings(t *testing.T) {
 			assert.Equal(t, tc.expectedURLPath, actualURLPath)
 		})
 	}
+}
+
+func Test_returns_content_of_file_below_root_folder(t *testing.T) {
+	// Given
+	cache, err := NewTemplateCache("testdata")
+	require.NoError(t, err)
+
+	// When
+	actualContent, err := cache.GetTemplate("siri/test.xml")
+	require.NoError(t, err)
+
+	// Then
+	expectedContent := `<Siri>
+  <time>{{ dateTime .Now }}</time>
+  <futureTime>{{ dateTime (addTime .Now "5m") }}<futureTime>
+  <client>{{ .ClientRef }}</client>
+</Siri>`
+	assert.Equal(t, expectedContent, actualContent)
+}
+
+func Test_returns_error_when_file_does_not_exist(t *testing.T) {
+	// Given
+	cache, err := NewTemplateCache("testdata")
+	require.NoError(t, err)
+
+	// When
+	_, terr := cache.GetTemplate("siri/DOES-NOT_EXIST.xml")
+
+	// Then
+	require.Error(t, terr)
+}
+
+func Test_should_not_leave_the_template_root_folder(t *testing.T) {
+	// Given
+	cache, err := NewTemplateCache("testdata")
+	require.NoError(t, err)
+
+	// ensure file outside of testdata exists
+	_, terr := os.Stat("testdata/../../../README.md")
+	require.NoError(t, terr)
+
+	// When
+	c, err := cache.GetTemplate("../../../README.md")
+
+	assert.Empty(t, c)
+	// Then
+	require.Error(t, err)
 }
