@@ -13,7 +13,7 @@ import (
 
 // Client contains everything needed for a SIRI client
 type Client struct {
-	address             string
+	clientAddress       string
 	ClientRef           string
 	ServerURL           string
 	ServerRequest       <-chan ServerRequest
@@ -48,7 +48,7 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 	return Client{
 		ClientRef:           clientRef,
 		ServerURL:           serverURL,
-		address:             address,
+		clientAddress:       address,
 		ServerRequest:       serverRequest,
 		serverRequestWriter: serverRequest,
 		AutoClientResponse: &AutoClientResponse{
@@ -81,7 +81,7 @@ func (c Client) Send(url string, body string) (ServerResponse, error) {
 // ListenAndServe starts the HTTP server needed to listen for SIRI server requests such as DataReady requests
 func (c Client) ListenAndServe() error {
 	server := &http.Server{
-		Addr:              c.address,
+		Addr:              c.clientAddress,
 		ReadHeaderTimeout: 5 * time.Second,
 		Handler:           c.createHandler(),
 	}

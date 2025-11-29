@@ -47,13 +47,13 @@ func (tc TemplateCache) ExecuteTemplate(name string, data Data) (string, error) 
 	if err != nil {
 		return "", fmt.Errorf("could not read template file %s: %w", templateFile, err)
 	}
-	t, err := template.New(name).Funcs(funcs).Parse(string(content))
+	template, err := template.New(name).Funcs(funcs).Parse(string(content))
 	if err != nil {
 		return "", fmt.Errorf("could not create template %s: %w", name, err)
 	}
 
 	var bytesBuffer bytes.Buffer
-	terr := t.ExecuteTemplate(&bytesBuffer, name, data)
+	terr := template.ExecuteTemplate(&bytesBuffer, name, data)
 	if terr != nil {
 		return "", fmt.Errorf("could not execute template %s: %w", name, terr)
 	}

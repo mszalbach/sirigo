@@ -37,10 +37,10 @@ func newSiriClientView(
 		model.url = url
 	})
 
-	bodyInput := tview.NewTextArea()
-	bodyInput.SetBorder(true).SetTitle("Client Request")
-	bodyInput.SetChangedFunc(func() {
-		model.body = bodyInput.GetText()
+	siriClientRequestArea := tview.NewTextArea()
+	siriClientRequestArea.SetBorder(true).SetTitle("Client Request")
+	siriClientRequestArea.SetChangedFunc(func() {
+		model.body = siriClientRequestArea.GetText()
 	})
 
 	dropdown := tview.NewDropDown().SetLabel("Templates: ")
@@ -53,24 +53,27 @@ func newSiriClientView(
 	}
 
 	dropdown.SetSelectedFunc(func(text string, _ int) {
-		et, err := sendTemplates.ExecuteTemplate(text, siri.Data{Now: time.Now(), ClientRef: siriClient.ClientRef})
+		requestTemplate, err := sendTemplates.ExecuteTemplate(
+			text,
+			siri.Data{Now: time.Now(), ClientRef: siriClient.ClientRef},
+		)
 		if err != nil {
 			errorChannel <- err
 			return
 		}
-		urlPath := siri.GetURLPathFromTemplate(et)
+		urlPath := siri.GetURLPathFromTemplate(requestTemplate)
 		// If no server URL is configured, let the user enter the full URL
 		if siriClient.ServerURL != "" {
 			urlInput.SetText(siriClient.ServerURL + urlPath)
 		}
-		bodyInput.SetText(et, false)
+		siriClientRequestArea.SetText(requestTemplate, false)
 	})
 
 	flex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(urlInput, 2, 0, true).
 		AddItem(dropdown, 2, 0, false).
-		AddItem(bodyInput, 0, 1, false)
+		AddItem(siriClientRequestArea, 0, 1, false)
 
 	return siriClientView{
 		Flex:         flex,
