@@ -52,7 +52,7 @@ func (tc TemplateCache) GetTemplate(name string) (string, error) {
 
 // executeTemplate finds the template and executes it with the provided data
 func executeTemplate(content string, data data) (string, error) {
-	template, err := template.New("siri").Funcs(funcs).Parse(string(content))
+	template, err := template.New("siri").Funcs(funcs).Parse(content)
 	if err != nil {
 		return "", err
 	}
