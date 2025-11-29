@@ -6,7 +6,6 @@ linters:
     - gosec
     - importas
     - modernize
-    - testpackage
     - loggercheck
     - sloglint
     - canonicalheader

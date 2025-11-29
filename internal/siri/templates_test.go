@@ -1,10 +1,9 @@
-package siri_test
+package siri
 
 import (
 	"testing"
 	"time"
 
-	"github.com/mszalbach/sirigo/internal/siri"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -13,10 +12,10 @@ var now = time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 
 func Test_returns_rendered_template_with_replaced_variables(t *testing.T) {
 	// Given
-	tc := siri.NewTemplateCache("testdata")
+	tc := NewTemplateCache("testdata")
 
 	// When
-	actual, err := tc.ExecuteTemplate("siri/test.xml", siri.Data{Now: now, ClientRef: "testClient"})
+	actual, err := tc.ExecuteTemplate("siri/test.xml", Data{Now: now, ClientRef: "testClient"})
 	require.NoError(t, err)
 
 	// Then
@@ -30,10 +29,10 @@ func Test_returns_rendered_template_with_replaced_variables(t *testing.T) {
 
 func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
 	// Given
-	tc := siri.NewTemplateCache("testdata")
+	tc := NewTemplateCache("testdata")
 
 	// When
-	actual, err := tc.ExecuteTemplate("siri/test.xml", siri.Data{})
+	actual, err := tc.ExecuteTemplate("siri/test.xml", Data{})
 	require.NoError(t, err)
 
 	// Then
@@ -47,10 +46,10 @@ func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
 
 func Test_returns_error_when_there_are_no_templates(t *testing.T) {
 	// Given
-	tc := siri.NewTemplateCache("testdata/empty")
+	tc := NewTemplateCache("testdata/empty")
 
 	// When
-	_, err := tc.ExecuteTemplate("DOES-NOT-EXIST.xml", siri.Data{Now: now, ClientRef: "testClient"})
+	_, err := tc.ExecuteTemplate("DOES-NOT-EXIST.xml", Data{Now: now, ClientRef: "testClient"})
 
 	// Then
 	assert.Error(t, err)
@@ -68,7 +67,7 @@ func Test_returns_template_names(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.templatePath, func(t *testing.T) {
 			// Given
-			cache := siri.NewTemplateCache(tc.templatePath)
+			cache := NewTemplateCache(tc.templatePath)
 
 			// When
 			actual, err := cache.TemplateNames()
