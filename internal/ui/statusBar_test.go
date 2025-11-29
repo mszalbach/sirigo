@@ -40,7 +40,7 @@ func Test_shows_error_when_one_is_sent_via_channel(t *testing.T) {
 	box := newStatusBar(channel)
 
 	// When
-	channel <- errors.New("Failed to send")
+	channel <- errors.New("failed to send")
 	box.Draw(screen)
 
 	// Then

@@ -12,7 +12,8 @@ linters:
     - gocritic
     - cyclop
     - revive
-
+    - ineffassign
+    - nilnesserr
   exclusions:
     rules:
       - linters: [errcheck]
