@@ -2,7 +2,6 @@ package ui
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/mszalbach/sirigo/internal/siri"
 	"github.com/rivo/tview"
@@ -34,16 +33,13 @@ func newSiriServerView(
 	}
 
 	autoresponseDropdown.SetOptions(templateNames, nil)
-	autoresponseDropdown.SetSelectedFunc(func(text string, _ int) {
-		responseBody, err := responseTemplates.ExecuteTemplate(
-			text,
-			siri.Data{Now: time.Now(), ClientRef: siriClient.ClientRef},
-		)
+	autoresponseDropdown.SetSelectedFunc(func(name string, _ int) {
+		template, err := responseTemplates.GetTemplate(name)
 		if err != nil {
 			errorChannel <- err
 			return
 		}
-		siriClient.AutoClientResponse.Body = responseBody
+		siriClient.AutoClientResponse.Body = template
 	})
 	autoresponseDropdown.SetCurrentOption(0)
 

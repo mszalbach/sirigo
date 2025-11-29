@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"time"
-
 	"github.com/mszalbach/sirigo/internal/siri"
 	"github.com/rivo/tview"
 )
@@ -52,11 +50,8 @@ func newSiriClientView(
 		errorChannel <- templateErr
 	}
 
-	dropdown.SetSelectedFunc(func(text string, _ int) {
-		requestTemplate, err := sendTemplates.ExecuteTemplate(
-			text,
-			siri.Data{Now: time.Now(), ClientRef: siriClient.ClientRef},
-		)
+	dropdown.SetSelectedFunc(func(name string, _ int) {
+		requestTemplate, err := sendTemplates.GetTemplate(name)
 		if err != nil {
 			errorChannel <- err
 			return

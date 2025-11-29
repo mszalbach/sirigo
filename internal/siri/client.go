@@ -62,7 +62,12 @@ var httpclient http.Client = http.Client{Timeout: 10 * time.Second}
 
 // Send sends a message to the SIRI server
 func (c Client) Send(url string, body string) (ServerResponse, error) {
-	res, err := httpclient.Post(url, "application/xml", strings.NewReader(body))
+	executedBody, err := executeTemplate(body, data{Now: time.Now(), ClientRef: c.ClientRef})
+	if err != nil {
+		return ServerResponse{}, err
+	}
+
+	res, err := httpclient.Post(url, "application/xml", strings.NewReader(executedBody))
 	if err != nil {
 		return ServerResponse{}, err
 	}
@@ -116,8 +121,16 @@ func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 
 	c.serverRequestWriter <- request
 
+	responseBody, err := executeTemplate(
+		c.AutoClientResponse.Body,
+		data{Now: time.Now(), ClientRef: c.ClientRef},
+	)
+	if err != nil {
+		slog.Error("Could not execute template for autoresponse", slog.Any("error", err))
+		return
+	}
 	w.WriteHeader(c.AutoClientResponse.Status)
-	_, ferr := fmt.Fprint(w, c.AutoClientResponse.Body)
+	_, ferr := fmt.Fprint(w, responseBody)
 	if ferr != nil {
 		slog.Error("Could not write auto response", slog.Any("error", ferr))
 	}

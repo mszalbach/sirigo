@@ -12,10 +12,15 @@ var now = time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
 
 func Test_returns_rendered_template_with_replaced_variables(t *testing.T) {
 	// Given
-	tc := NewTemplateCache("testdata")
+	template := `<Siri>
+  <time>{{ dateTime .Now }}</time>
+  <futureTime>{{ dateTime (addTime .Now "5m") }}<futureTime>
+  <client>{{ .ClientRef }}</client>
+</Siri>`
+	data := data{Now: now, ClientRef: "testClient"}
 
 	// When
-	actual, err := tc.ExecuteTemplate("siri/test.xml", Data{Now: now, ClientRef: "testClient"})
+	actual, err := executeTemplate(template, data)
 	require.NoError(t, err)
 
 	// Then
@@ -29,10 +34,15 @@ func Test_returns_rendered_template_with_replaced_variables(t *testing.T) {
 
 func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
 	// Given
-	tc := NewTemplateCache("testdata")
+	template := `<Siri>
+  <time>{{ dateTime .Now }}</time>
+  <futureTime>{{ dateTime (addTime .Now "5m") }}<futureTime>
+  <client>{{ .ClientRef }}</client>
+</Siri>`
+	data := data{}
 
 	// When
-	actual, err := tc.ExecuteTemplate("siri/test.xml", Data{})
+	actual, err := executeTemplate(template, data)
 	require.NoError(t, err)
 
 	// Then
@@ -46,13 +56,15 @@ func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
 
 func Test_returns_error_when_there_are_no_templates(t *testing.T) {
 	// Given
-	tc := NewTemplateCache("testdata/empty")
+	template := ""
+	data := data{Now: now, ClientRef: "testClient"}
 
 	// When
-	_, err := tc.ExecuteTemplate("DOES-NOT-EXIST.xml", Data{Now: now, ClientRef: "testClient"})
+	actual, err := executeTemplate(template, data)
+	require.NoError(t, err)
 
 	// Then
-	assert.Error(t, err)
+	assert.Empty(t, actual)
 }
 
 func Test_returns_template_names(t *testing.T) {
@@ -74,7 +86,6 @@ func Test_returns_template_names(t *testing.T) {
 			require.NoError(t, err)
 
 			// Then
-			// TODO better examples in the testdata folder
 			assert.Equal(t, tc.expectedTemplates, actual)
 		})
 	}

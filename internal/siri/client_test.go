@@ -2,6 +2,7 @@ package siri //nolint testpackage
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -73,6 +74,49 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 		Status:   http.StatusOK,
 	}
 	assert.Equal(t, expected, actual)
+}
+
+func Test_siri_client_body_is_a_template(t *testing.T) {
+	// Given
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		assert.Equal(t, "/siri/2.1/situation-exchange", req.URL.String())
+		rw.Header().Set("Content-Type", "application/xml")
+		rw.WriteHeader(http.StatusOK)
+
+		defer req.Body.Close()
+		bytesBody, err := io.ReadAll(req.Body)
+		assert.NoError(t, err)
+		assert.Equal(t, `
+<Siri>
+	<ServiceRequest>
+		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
+		<RequestorRef>CLIENT REF</RequestorRef>
+		<SituationExchangeRequest>
+			<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
+			<Scope>line</Scope>
+			<LineRef>52</LineRef>
+		</SituationExchangeRequest>
+	</ServiceRequest>
+</Siri>`, string(bytesBody))
+	}))
+	defer server.Close()
+
+	// When
+	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
+	_, err := client.Send(server.URL+"/siri/2.1/situation-exchange", `
+<Siri>
+	<ServiceRequest>
+		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
+		<RequestorRef>{{ .ClientRef }}</RequestorRef>
+		<SituationExchangeRequest>
+			<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
+			<Scope>line</Scope>
+			<LineRef>52</LineRef>
+		</SituationExchangeRequest>
+	</ServiceRequest>
+</Siri>`)
+
+	require.NoError(t, err)
 }
 
 func Test_siri_client_receiving_from_server(t *testing.T) {

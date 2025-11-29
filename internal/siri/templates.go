@@ -21,8 +21,8 @@ func NewTemplateCache(templatePath string) TemplateCache {
 	return TemplateCache{root: templatePath}
 }
 
-// Data is used to render the templates
-type Data struct {
+// data is used to render the templates
+type data struct {
 	Now       time.Time
 	ClientRef string
 }
@@ -40,22 +40,27 @@ var funcs = template.FuncMap{
 	},
 }
 
-// ExecuteTemplate finds the template and executes it with the provided data
-func (tc TemplateCache) ExecuteTemplate(name string, data Data) (string, error) {
+// GetTemplate returns the content of a template on the filesystem
+func (tc TemplateCache) GetTemplate(name string) (string, error) {
 	templateFile := filepath.Join(tc.root, name)
 	content, err := os.ReadFile(templateFile) //nolint gosec
 	if err != nil {
 		return "", fmt.Errorf("could not read template file %s: %w", templateFile, err)
 	}
-	template, err := template.New(name).Funcs(funcs).Parse(string(content))
+	return string(content), err
+}
+
+// executeTemplate finds the template and executes it with the provided data
+func executeTemplate(content string, data data) (string, error) {
+	template, err := template.New("siri").Funcs(funcs).Parse(string(content))
 	if err != nil {
-		return "", fmt.Errorf("could not create template %s: %w", name, err)
+		return "", err
 	}
 
 	var bytesBuffer bytes.Buffer
-	terr := template.ExecuteTemplate(&bytesBuffer, name, data)
+	terr := template.Execute(&bytesBuffer, data)
 	if terr != nil {
-		return "", fmt.Errorf("could not execute template %s: %w", name, terr)
+		return "", terr
 	}
 	return bytesBuffer.String(), nil
 }
