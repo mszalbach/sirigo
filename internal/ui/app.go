@@ -35,7 +35,7 @@ func NewSiriApp(
 	errorChannel := make(chan error, 5)
 	statusBar := newStatusBar(errorChannel)
 	keymap := newKeymap()
-	sendView := newSendView(siriClient, sendTemplates, errorChannel)
+	sendView := newSiriClientView(siriClient, sendTemplates, errorChannel)
 
 	// TODO cleanup into own go files
 	serverResonseView := tview.NewTextView()

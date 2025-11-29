@@ -7,20 +7,24 @@ import (
 	"github.com/rivo/tview"
 )
 
-type sendView struct {
+type siriClientView struct {
 	*tview.Flex
-	model        *sendViewModel
+	model        *siriClientViewModel
 	siriClient   siri.Client
 	errorChannel chan<- error
 }
 
-type sendViewModel struct {
+type siriClientViewModel struct {
 	body string
 	url  string
 }
 
-func newSendView(siriClient siri.Client, sendTemplates siri.TemplateCache, errorChannel chan<- error) sendView {
-	model := sendViewModel{
+func newSiriClientView(
+	siriClient siri.Client,
+	sendTemplates siri.TemplateCache,
+	errorChannel chan<- error,
+) siriClientView {
+	model := siriClientViewModel{
 		body: "",
 		url:  "",
 	}
@@ -63,7 +67,7 @@ func newSendView(siriClient siri.Client, sendTemplates siri.TemplateCache, error
 		AddItem(dropdown, 2, 0, false).
 		AddItem(bodyInput, 0, 1, false)
 
-	return sendView{
+	return siriClientView{
 		Flex:         flex,
 		siriClient:   siriClient,
 		model:        &model,
@@ -71,7 +75,7 @@ func newSendView(siriClient siri.Client, sendTemplates siri.TemplateCache, error
 	}
 }
 
-func (sv sendView) send() siri.ServerResponse {
+func (sv siriClientView) send() siri.ServerResponse {
 	res, err := sv.siriClient.Send(sv.model.url, sv.model.body)
 	if err != nil {
 		sv.errorChannel <- err
