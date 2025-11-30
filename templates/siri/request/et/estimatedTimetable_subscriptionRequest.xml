@@ -7,7 +7,7 @@
 			<SubscriberRef>{{ .ClientRef }}</SubscriberRef>
 			<SubscriptionIdentifier>1</SubscriptionIdentifier>
 			<InitialTerminationTime>{{ dateTime (addTime .Now "2h") }}</InitialTerminationTime>
-			<EstimatedTimetableRequest version="2.0">
+			<EstimatedTimetableRequest>
 				<RequestTimestamp>{{ dateTime .Now }}</RequestTimestamp>
 				<PreviewInterval>PT60M</PreviewInterval>
 				<OperatorRef>SMOOTH</OperatorRef>
