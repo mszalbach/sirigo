@@ -43,7 +43,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 <Siri>
 	<ServiceRequest>
 		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
-		<RequestorRef>NADER</RequestorRef>
+		<RequestorRef>SUB</RequestorRef>
 		<SituationExchangeRequest>
 			<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
 			<Scope>line</Scope>
@@ -126,7 +126,7 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 <Siri>
 	<DataReadyAcknowledgement>
 		<ResponseTimestamp>2004-12-17T09:30:47-05:00</ResponseTimestamp>
-		<ConsumerRef>NADER</ConsumerRef>
+		<ConsumerRef>SUB</ConsumerRef>
 		<Status>true</Status>
 	</DataReadyAcknowledgement>
 </Siri>`
@@ -153,7 +153,7 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 <Siri>
 	<DataReadyAcknowledgement>
 		<ResponseTimestamp>2004-12-17T09:30:47-05:00</ResponseTimestamp>
-		<ConsumerRef>NADER</ConsumerRef>
+		<ConsumerRef>SUB</ConsumerRef>
 		<Status>true</Status>
 	</DataReadyAcknowledgement>
 </Siri>`

@@ -10,7 +10,7 @@
 			<EstimatedTimetableRequest>
 				<RequestTimestamp>{{ dateTime .Now }}</RequestTimestamp>
 				<PreviewInterval>PT60M</PreviewInterval>
-				<OperatorRef>SMOOTH</OperatorRef>
+				<OperatorRef>BUS</OperatorRef>
 				<!-- <Lines>
 					<LineDirection>
 						<LineRef></LineRef>

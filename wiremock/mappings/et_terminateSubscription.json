@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/interfaces/siri/2.1/estimated-timetable.xml",
+    "bodyPatterns": [
+      {
+        "matchesXPath": "//TerminateSubscriptionRequest"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/xml"
+    },
+    "bodyFileName": "siri/terminateSubscription_response.xml"
+  }
+}

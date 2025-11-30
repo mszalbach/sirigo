@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1">
+	<SubscriptionResponse>
+		<ResponseTimestamp>{{now}}</ResponseTimestamp>
+		<ResponderRef>SIRI</ResponderRef>
+		<ResponseStatus>
+			<ResponseTimestamp>{{now}}</ResponseTimestamp>
+            <!-- TODO aus request ersetzten beides -->
+			<SubscriptionRef>0003456</SubscriptionRef>
+			<Status>true</Status>
+			<ValidUntil>{{now offset='3 hours'}}</ValidUntil>
+		</ResponseStatus>
+	</SubscriptionResponse>
+</Siri>

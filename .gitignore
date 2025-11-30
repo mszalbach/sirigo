@@ -16,6 +16,7 @@ TODO.md
 
 !*.yaml
 !*.xml
+!*.json
 
 !Makefile
 
