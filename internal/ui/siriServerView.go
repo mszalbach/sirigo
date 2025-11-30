@@ -59,10 +59,12 @@ func newSiriServerView(
 func listenForServerRequests(siriClient siri.Client, serverRequestTextView *tview.TextView) {
 	for req := range siriClient.ServerRequest {
 		body := fmt.Sprintf("<!-- %s%s -->\n%s", req.RemoteAddress, req.URL, req.Body)
+		serverRequestTextView.ScrollToBeginning()
 		serverRequestTextView.SetText(tview.TranslateANSI(highlight(body, req.Language)))
 	}
 }
 
 func (sv siriServerView) setResponse(response siri.ServerResponse) {
+	sv.serverResponseTextView.ScrollToBeginning()
 	sv.serverResponseTextView.SetText(tview.TranslateANSI(highlight(response.Body, response.Language)))
 }
