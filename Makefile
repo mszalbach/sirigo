@@ -20,6 +20,9 @@ lint: ## Run the linter.
 fmt: ## Format the code.
 	@golangci-lint fmt
 
+.PHONY: check
+check: fmt lint test ## Helper to format, lint and test in one go
+
 .PHONY: clean
 clean: ## Clean the build artifacts.
 	rm -rf bin/sirigo
