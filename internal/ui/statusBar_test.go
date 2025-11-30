@@ -45,7 +45,7 @@ func Test_shows_error_when_one_is_sent_via_channel(t *testing.T) {
 
 	// Then
 	actualLine := getScreenTextLine(screen, 0, 20)
-	assert.Equal(t, "Failed to send", actualLine)
+	assert.Equal(t, "failed to send", actualLine)
 }
 
 func getScreenTextLine(screen tcell.SimulationScreen, y int, length int) string {
