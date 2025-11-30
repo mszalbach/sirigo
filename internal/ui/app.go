@@ -2,6 +2,7 @@
 package ui
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gdamore/tcell/v2"
@@ -16,6 +17,7 @@ func NewSiriApp(
 	responseTemplates siri.TemplateCache,
 ) *tview.Application {
 	app := tview.NewApplication()
+	app.SetTitle(fmt.Sprintf("Sirigo (%s)", siriClient.ClientRef))
 
 	initStyles()
 	app.EnableMouse(true)

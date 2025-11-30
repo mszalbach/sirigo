@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"fmt"
+
 	"github.com/mszalbach/sirigo/internal/siri"
 	"github.com/rivo/tview"
 )
@@ -29,14 +31,14 @@ func newSiriClientView(
 
 	urlInput := tview.NewInputField().SetPlaceholder("http://localhost:8080")
 	urlInput.SetLabel("URL: ")
-	urlInput.SetFieldWidth(40)
+	urlInput.SetFieldWidth(80)
 	urlInput.SetText(siriClient.ServerURL)
 	urlInput.SetChangedFunc(func(url string) {
 		model.url = url
 	})
 
 	siriClientRequestArea := tview.NewTextArea()
-	siriClientRequestArea.SetBorder(true).SetTitle("Client Request")
+	siriClientRequestArea.SetBorder(true).SetTitle(fmt.Sprintf("Client Request (clientRef: %s)", siriClient.ClientRef))
 	siriClientRequestArea.SetChangedFunc(func() {
 		model.body = siriClientRequestArea.GetText()
 	})
