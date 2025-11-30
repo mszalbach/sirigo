@@ -1,4 +1,4 @@
-<!-- path: /siri/et.xml -->
+<!-- path: /interfaces/siri/2.1/estimated-timetable.xml -->
 <Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1">
 	<TerminateSubscriptionRequest>
 		<RequestTimestamp>{{ dateTime .Now }}</RequestTimestamp>
