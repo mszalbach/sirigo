@@ -9,7 +9,7 @@ If you want to learn more about the architecture and framework decisions, check 
 
 ## Installation
 
-You need Go 1.25 and `golangci-lint` installed.
+You need Go 1.25 installed.
 
 ```bash
 make build
@@ -63,6 +63,27 @@ You can open a GitHub issue.
 ## Contributing
 
 This is a test project and contributions are not currently planned. However, contributions are not forbidden — feel free to open an issue to discuss your ideas.
+
+## Development
+
+For development check the [Makefile](./Makefile) how to run format, linter and the tests.
+For the linter you need `golangci-lint` installed.
+
+### SIRI test server
+
+Starting the SIRI server mock:
+
+```bash
+docker compose up
+```
+
+See the config in the `wiremock/` folder if you want to change something.
+
+To simulate a SIRI server request send it via curl:
+
+```bash
+curl -X POST -H "content-type: text/xml" "<xml>Test</xml>"
+```
 
 ## License
 
