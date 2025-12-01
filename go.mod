@@ -4,7 +4,7 @@ go 1.25.4
 
 require (
 	github.com/alecthomas/chroma/v2 v2.20.0
-	github.com/gdamore/tcell/v2 v2.13.0
+	github.com/gdamore/tcell/v2 v2.13.1
 	github.com/rivo/tview v0.42.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/sync v0.18.0
