@@ -1,5 +1,7 @@
 # Sirigo
 
+[![build](https://github.com/mszalbach/sirigo/actions/workflows/build-actions.yaml/badge.svg)](https://github.com/mszalbach/sirigo/actions/workflows/build-actions.yaml)
+
 ## Description
 
 Sirigo is a command-line tool for interacting with [SIRI](https://transmodel-cen.eu/index.php/siri/) servers.
