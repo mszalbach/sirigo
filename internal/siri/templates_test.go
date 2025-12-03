@@ -69,16 +69,19 @@ func Test_returns_empty_when_there_is_no_templates(t *testing.T) {
 }
 
 func Test_returns_template_names(t *testing.T) {
-	testCases := []struct {
+	testCases := map[string]struct {
 		templatePath      string
 		expectedTemplates []string
 	}{
-		{"testdata", []string{"siri/test.xml", "siri/test2.xml", "vdv453/ans/test.xml", "vdv453/test.xml"}},
-		{"testdata/vdv453", []string{"ans/test.xml", "test.xml"}},
-		{"testdata/empty", nil},
+		"root testdata": {
+			"testdata",
+			[]string{"siri/test.xml", "siri/test2.xml", "vdv453/ans/test.xml", "vdv453/test.xml"},
+		},
+		"using one subfolder": {"testdata/vdv453", []string{"ans/test.xml", "test.xml"}},
+		"empty folder":        {"testdata/empty", nil},
 	}
-	for _, tc := range testCases {
-		t.Run(tc.templatePath, func(t *testing.T) {
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
 			// Given
 			cache, err := NewTemplateCache(tc.templatePath)
 			require.NoError(t, err)
@@ -94,23 +97,22 @@ func Test_returns_template_names(t *testing.T) {
 }
 
 func Test_can_extract_url_paths_from_strings(t *testing.T) {
-	testCases := []struct {
-		name            string
+	testCases := map[string]struct {
 		template        string
 		expectedURLPath string
 	}{
-		{"Empty string", "", ""},
-		{"Only the url path comment", "<!-- path: /siri/et.xml -->", "/siri/et.xml"},
-		{"Returns the first URL path found", "<!-- path: /siri/et.xml --><!-- path: /siri/vm.xml -->", "/siri/et.xml"},
-		{"realistic XML example", `<!-- path: /siri/ca.xml -->
+		"Empty string":                     {"", ""},
+		"Only the url path comment":        {"<!-- path: /siri/et.xml -->", "/siri/et.xml"},
+		"Returns the first URL path found": {"<!-- path: /siri/et.xml --><!-- path: /siri/vm.xml -->", "/siri/et.xml"},
+		"realistic XML example": {`<!-- path: /siri/ca.xml -->
 <Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1">
 	<SubscriptionRequest>
 	</SubscriptionRequest>
 </Siri>`, "/siri/ca.xml"},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
 			actualURLPath := GetURLPathFromTemplate(tc.template)
 			assert.Equal(t, tc.expectedURLPath, actualURLPath)
 		})

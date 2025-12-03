@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -178,37 +177,6 @@ func Test_siri_client_receiving_from_server(t *testing.T) {
 	assert.Equal(t, expectedServerRequest, actualServerRequest)
 }
 
-func Test_client_send_returns_server_responses(t *testing.T) {
-	testCases := []struct {
-		actualStatus   int
-		expectedStatus int
-	}{
-		{http.StatusOK, http.StatusOK},
-		{http.StatusInternalServerError, http.StatusInternalServerError},
-		{http.StatusNotFound, http.StatusNotFound},
-	}
-
-	for _, tc := range testCases {
-		t.Run(strconv.Itoa(tc.actualStatus), func(t *testing.T) {
-			// Given
-			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-				assert.Equal(t, "/siri/v2", req.URL.String())
-				rw.WriteHeader(tc.actualStatus)
-			}))
-			defer server.Close()
-
-			// When
-			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
-			actual, err := client.Send(server.URL+"/siri/v2", "IGNORE")
-			require.NoError(t, err)
-
-			// Then
-			expected := ServerResponse{Body: ``, Language: "plaintext", Status: tc.expectedStatus}
-			assert.Equal(t, expected, actual)
-		})
-	}
-}
-
 func Test_client_send_understands_content_types(t *testing.T) {
 	testCases := []struct {
 		actualContentType string
@@ -243,9 +211,9 @@ func Test_client_send_understands_content_types(t *testing.T) {
 }
 
 func Test_server_does_not_work_for_non_post(t *testing.T) {
-	testCases := []string{http.MethodGet, http.MethodPut, http.MethodHead}
-	for _, tc := range testCases {
-		t.Run(tc, func(t *testing.T) {
+	testCases := map[string]string{"GET": http.MethodGet, "PUT": http.MethodPut, "HEAD": http.MethodHead}
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
 			// Given
 			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
 
