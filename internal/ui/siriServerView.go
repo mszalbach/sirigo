@@ -8,11 +8,13 @@ import (
 )
 
 type siriServerView struct {
+	app *tview.Application
 	*tview.Flex
 	serverResponseTextView *tview.TextView
 }
 
 func newSiriServerView(
+	app *tview.Application,
 	siriClient siri.Client,
 	responseTemplates siri.TemplateCache,
 	errorChannel chan<- error,
@@ -53,6 +55,7 @@ func newSiriServerView(
 	return siriServerView{
 		Flex:                   siriServerFlex,
 		serverResponseTextView: serverResponseTextView,
+		app:                    app,
 	}
 }
 
@@ -66,5 +69,12 @@ func listenForServerRequests(siriClient siri.Client, serverRequestTextView *tvie
 
 func (sv siriServerView) setResponse(response siri.ServerResponse) {
 	sv.serverResponseTextView.ScrollToBeginning()
-	sv.serverResponseTextView.SetText(tview.TranslateANSI(highlight(response.Body, response.Language)))
+	sv.serverResponseTextView.SetText(response.Body)
+	// highlight takes a lot of time for big responses, so doing it delayed later
+	go func() {
+		highlighted := tview.TranslateANSI(highlight(response.Body, response.Language))
+		sv.app.QueueUpdateDraw(func() {
+			sv.serverResponseTextView.SetText(highlighted)
+		})
+	}()
 }

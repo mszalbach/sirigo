@@ -58,7 +58,7 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 	}
 }
 
-var httpclient http.Client = http.Client{Timeout: 10 * time.Second}
+var httpclient = http.Client{Timeout: 10 * time.Second}
 
 // Send sends a message to the SIRI server
 func (c Client) Send(url string, body string) (ServerResponse, error) {

@@ -28,7 +28,7 @@ func NewSiriApp(
 	statusBar := newStatusBar(errorChannel)
 	keymap := newKeymap()
 	siriClientView := newSiriClientView(siriClient, sendTemplates, errorChannel)
-	siriServerView := newSiriServerView(siriClient, responseTemplates, errorChannel)
+	siriServerView := newSiriServerView(app, siriClient, responseTemplates, errorChannel)
 
 	// Building layout
 	bodyFlex := tview.NewFlex().
