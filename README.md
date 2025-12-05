@@ -71,6 +71,13 @@ This is a test project and contributions are not currently planned. However, con
 For development check the [Makefile](./Makefile) how to run format, linter and the tests.
 For the linter you need `golangci-lint` installed.
 
+TL;DR
+
+```bash
+docker compose up
+make check # fmt, lint, test
+go run ./...
+```
 ### SIRI test server
 
 Starting the SIRI server mock:
