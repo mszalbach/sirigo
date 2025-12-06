@@ -2,6 +2,7 @@
 package siri
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log/slog"
@@ -17,8 +18,9 @@ type Client struct {
 	ClientRef           string
 	ServerURL           string
 	ServerRequest       <-chan ServerRequest
-	serverRequestWriter chan ServerRequest
 	AutoClientResponse  *AutoClientResponse
+	server              *http.Server
+	serverRequestWriter chan ServerRequest
 }
 
 // AutoClientResponse should be used to answer server requests
@@ -55,6 +57,10 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 			Body:   "",
 			Status: http.StatusOK,
 		},
+		server: &http.Server{
+			Addr:              address,
+			ReadHeaderTimeout: 5 * time.Second,
+		},
 	}
 }
 
@@ -85,12 +91,13 @@ func (c Client) Send(url string, body string) (ServerResponse, error) {
 
 // ListenAndServe starts the HTTP server needed to listen for SIRI server requests such as DataReady requests
 func (c Client) ListenAndServe() error {
-	server := &http.Server{
-		Addr:              c.clientAddress,
-		ReadHeaderTimeout: 5 * time.Second,
-		Handler:           c.createHandler(),
-	}
-	return server.ListenAndServe()
+	c.server.Handler = c.createHandler()
+	return c.server.ListenAndServe()
+}
+
+// Stop stops the http server for the given context. Uses to be able to correctly stop the server from somewhere else
+func (c Client) Stop(ctx context.Context) error {
+	return c.server.Shutdown(ctx)
 }
 
 func (c Client) createHandler() *http.ServeMux {

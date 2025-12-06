@@ -2,8 +2,8 @@
 package ui
 
 import (
+	"context"
 	"fmt"
-	"os"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/mszalbach/sirigo/internal/siri"
@@ -15,6 +15,7 @@ func NewSiriApp(
 	siriClient siri.Client,
 	sendTemplates siri.TemplateCache,
 	responseTemplates siri.TemplateCache,
+	cancel context.CancelFunc,
 ) *tview.Application {
 	app := tview.NewApplication()
 	app.SetTitle(fmt.Sprintf("Sirigo (%s)", siriClient.ClientRef))
@@ -48,9 +49,7 @@ func NewSiriApp(
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlX:
-			app.Stop()
-			// Not the correct way to shut down the app and web server, but works for now
-			os.Exit(0)
+			cancel()
 		case tcell.KeyCtrlO:
 			response := siriClientView.send()
 			siriServerView.setResponse(response)

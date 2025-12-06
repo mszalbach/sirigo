@@ -2,7 +2,10 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"log/slog"
+	"net/http"
 	"os"
 
 	"github.com/mszalbach/sirigo/internal/siri"
@@ -30,11 +33,24 @@ func main() {
 		panic(err)
 	}
 
-	app := ui.NewSiriApp(siriClient, clientTemplates, serverTemplates)
+	ctx, cancel := context.WithCancel(context.Background())
+	app := ui.NewSiriApp(siriClient, clientTemplates, serverTemplates, cancel)
 
-	var g errgroup.Group
-	g.Go(siriClient.ListenAndServe)
-	g.Go(app.Run)
+	eg, _ := errgroup.WithContext(ctx)
+	// TODO on "port is already used" the error is not returned directly
+	eg.Go(siriClient.ListenAndServe)
+	eg.Go(app.Run)
+	eg.Go(func() error {
+		<-ctx.Done()
+		app.Stop()
+		return siriClient.Stop(ctx)
+	})
 
-	panic(g.Wait())
+	werr := eg.Wait()
+	if errors.Is(werr, http.ErrServerClosed) {
+		slog.Info("Application closed", slog.Any("context", werr))
+	} else {
+		slog.Error("Something unexpected closed the app", slog.Any("error", werr))
+		os.Exit(1)
+	}
 }
