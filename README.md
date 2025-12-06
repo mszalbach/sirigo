@@ -91,7 +91,7 @@ See the config in the `wiremock/` folder if you want to change something.
 To simulate a SIRI server request send it via curl:
 
 ```bash
-curl -X POST -H "content-type: text/xml" "<xml>Test</xml>"
+curl -X POST -H "content-type: text/xml" -d "<xml>Test</xml>" localhost:800
 ```
 
 ## License
