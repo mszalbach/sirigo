@@ -22,3 +22,7 @@ TODO.md
 
 # ...even if they are in subdirectories
 !*/
+
+# ignore release folder because there could be files allowed above
+dist/
+
