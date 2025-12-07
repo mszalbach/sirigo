@@ -1,7 +1,6 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 version: 2
 
-// TODO https://github.com/goreleaser/goreleaser-action 
 before:
   hooks:
     # You may remove this if you don't use go modules.
