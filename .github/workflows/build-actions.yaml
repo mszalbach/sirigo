@@ -38,4 +38,5 @@ jobs:
       uses: anchore/sbom-action@v0
       if: startsWith(github.ref, 'refs/tags/')
       with:
+        artifact-name: sirigo.cyclonedx
         format: cyclonedx
