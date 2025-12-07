@@ -8,13 +8,13 @@ import (
 )
 
 type siriServerView struct {
-	app *tview.Application
+	app queueUpdateDrawer
 	*tview.Flex
 	serverResponseTextView *tview.TextView
 }
 
 func newSiriServerView(
-	app *tview.Application,
+	app queueUpdateDrawer,
 	siriClient siri.Client,
 	responseTemplates siri.TemplateCache,
 	errorChannel chan<- error,
@@ -50,7 +50,7 @@ func newSiriServerView(
 		AddItem(serverResponseTextView, 0, 2, false).
 		AddItem(serverRequestTextView, 0, 1, false)
 
-	go listenForServerRequests(siriClient, serverRequestTextView)
+	go listenForServerRequests(app, serverRequestTextView, siriClient)
 
 	return siriServerView{
 		Flex:                   siriServerFlex,
@@ -59,11 +59,14 @@ func newSiriServerView(
 	}
 }
 
-func listenForServerRequests(siriClient siri.Client, serverRequestTextView *tview.TextView) {
+func listenForServerRequests(app queueUpdateDrawer, serverRequestTextView *tview.TextView, siriClient siri.Client) {
 	for req := range siriClient.ServerRequest {
 		body := fmt.Sprintf("<!-- %s%s -->\n%s", req.RemoteAddress, req.URL, req.Body)
 		serverRequestTextView.ScrollToBeginning()
-		serverRequestTextView.SetText(tview.TranslateANSI(highlight(body, req.Language)))
+		// changing UI from an async go routine, so it needs to use the queueUpdate methods
+		app.QueueUpdateDraw(func() {
+			serverRequestTextView.SetText(tview.TranslateANSI(highlight(body, req.Language)))
+		})
 	}
 }
 

@@ -6,9 +6,23 @@ import (
 	"testing"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
+
+type AppMock struct {
+	mock.Mock
+}
+
+func (app *AppMock) QueueUpdateDraw(f func()) *tview.Application {
+	// just execute the QueueUpdate no need for async stuff in the test
+	f()
+	return nil
+}
+
+var app = new(AppMock)
 
 func newTestScreen(t *testing.T) tcell.SimulationScreen {
 	screen := tcell.NewSimulationScreen("")
@@ -21,7 +35,7 @@ func Test_is_empty_without_channel(t *testing.T) {
 	// Given
 	screen := newTestScreen(t)
 	defer screen.Fini()
-	box := newStatusBar(nil)
+	box := newStatusBar(app, nil)
 
 	// When
 	box.Draw(screen)
@@ -37,7 +51,7 @@ func Test_shows_error_when_one_is_sent_via_channel(t *testing.T) {
 	defer screen.Fini()
 	channel := make(chan error)
 
-	box := newStatusBar(channel)
+	box := newStatusBar(app, channel)
 
 	// When
 	channel <- errors.New("failed to send")

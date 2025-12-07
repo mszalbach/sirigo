@@ -10,6 +10,12 @@ import (
 	"github.com/rivo/tview"
 )
 
+// queueUpdateDrawer allows a component to use tview async safe updating of components.
+// Requiered for async routines and to allow mocking this in tests since a tview.Application is not so gut testable (at my current understanding)
+type queueUpdateDrawer interface {
+	QueueUpdateDraw(f func()) *tview.Application
+}
+
 // NewSiriApp creates the tview application to interact with a SIRI server
 func NewSiriApp(
 	siriClient siri.Client,
@@ -26,7 +32,7 @@ func NewSiriApp(
 
 	// Building UI elements
 	errorChannel := make(chan error, 5)
-	statusBar := newStatusBar(errorChannel)
+	statusBar := newStatusBar(app, errorChannel)
 	keymap := newKeymap()
 	siriClientView := newSiriClientView(siriClient, sendTemplates, errorChannel)
 	siriServerView := newSiriServerView(app, siriClient, responseTemplates, errorChannel)

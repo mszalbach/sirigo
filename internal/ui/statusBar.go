@@ -9,13 +9,15 @@ type statusBar struct {
 	textView *tview.TextView
 }
 
-func newStatusBar(errorChannel chan error) statusBar {
+func newStatusBar(app queueUpdateDrawer, errorChannel chan error) statusBar {
 	textview := tview.NewTextView()
 	textview.SetDynamicColors(true)
 
 	go func() {
 		for err := range errorChannel {
-			textview.SetText("[red]" + err.Error())
+			app.QueueUpdateDraw(func() {
+				textview.SetText("[red]" + err.Error())
+			})
 		}
 	}()
 
