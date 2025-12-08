@@ -7,4 +7,3 @@ services:
       - 8080:8080
     volumes:
       - ./wiremock:/home/wiremock
-      # TODO getting watch to run so it can refresh?
