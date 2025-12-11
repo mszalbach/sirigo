@@ -7,9 +7,8 @@
 		<MoreData>false</MoreData>
 		<EstimatedTimetableDelivery>
 			<ResponseTimestamp>2001-12-17T09:30:47-05:00</ResponseTimestamp>
-			<!-- TODO aus request ersetzten beides -->
-			<SubscriberRef>SUB</SubscriberRef>
-			<SubscriptionRef>0004</SubscriptionRef>
+			<SubscriberRef>{{xPath request.body '/Siri/DataSupplyRequest/ConsumerRef/text()'}}</SubscriberRef>
+			<SubscriptionRef>{{xPath request.body '/Siri/DataSupplyRequest/NotificationRef/text()'}}</SubscriptionRef>
 			<Status>true</Status>
 			<ValidUntil>2001-12-17T19:30:47-05:00</ValidUntil>
 			<ShortestPossibleCycle>P1Y2M3DT10H30M</ShortestPossibleCycle>
