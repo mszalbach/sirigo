@@ -3,14 +3,15 @@ package main
 
 import (
 	"context"
-	"errors"
 	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/mszalbach/sirigo/internal/siri"
 	"github.com/mszalbach/sirigo/internal/ui"
-	"golang.org/x/sync/errgroup"
 )
 
 func main() {
@@ -23,7 +24,13 @@ func main() {
 	defer file.Close()
 	slog.SetDefault(logger)
 
+	cancelContext, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	stopContext, stop := signal.NotifyContext(cancelContext, syscall.SIGTERM, syscall.SIGINT)
+	defer stop()
+
 	siriClient := siri.NewClient(cfg.clientRef, cfg.url, cfg.clientPort)
+
 	clientTemplates, err := siri.NewTemplateCache(cfg.templateDir)
 	if err != nil {
 		panic(err)
@@ -33,24 +40,32 @@ func main() {
 		panic(err)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
 	app := ui.NewSiriApp(siriClient, clientTemplates, serverTemplates, cancel)
 
-	eg, _ := errgroup.WithContext(ctx)
-	// TODO on "port is already used" the error is not returned directly
-	eg.Go(siriClient.ListenAndServe)
-	eg.Go(app.Run)
-	eg.Go(func() error {
-		<-ctx.Done()
-		app.Stop()
-		return siriClient.Stop(ctx)
-	})
+	go func() {
+		if err := app.Run(); err != nil {
+			slog.Error("App could not be started", slog.Any("error", err))
+			panic("App could not be started")
+		}
+	}()
+	go func() {
+		if err := siriClient.ListenAndServe(); err != http.ErrServerClosed {
+			slog.Error(
+				"SIRI client could not be started",
+				slog.String("address", cfg.clientPort),
+				slog.Any("error", err),
+			)
+			panic("Server not working")
+		}
+	}()
 
-	werr := eg.Wait()
-	if errors.Is(werr, http.ErrServerClosed) {
-		slog.Info("Application closed", slog.Any("context", werr))
-	} else {
-		slog.Error("Something unexpected closed the app", slog.Any("error", werr))
-		os.Exit(1)
+	<-stopContext.Done()
+	slog.Info("Graceful shutdown")
+	app.Stop()
+
+	timeoutCtx, timeoutFunc := context.WithTimeout(context.Background(), 10*time.Second)
+	defer timeoutFunc()
+	if stopErr := siriClient.Stop(timeoutCtx); stopErr != nil {
+		slog.Warn("server stop failed", slog.Any("error", stopErr.Error()))
 	}
 }

@@ -7,7 +7,6 @@ require (
 	github.com/gdamore/tcell/v2 v2.13.4
 	github.com/rivo/tview v0.42.0
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/sync v0.19.0
 )
 
 require (
