@@ -45,11 +45,11 @@ func newSiriClientView(
 
 	dropdown := tview.NewDropDown().SetLabel("Templates: ")
 
-	templateNames, templateErr := sendTemplates.TemplateNames()
-	if templateErr == nil {
+	templateNames, err := sendTemplates.TemplateNames()
+	if err == nil {
 		dropdown.SetOptions(templateNames, nil)
 	} else {
-		errorChannel <- templateErr
+		errorChannel <- err
 	}
 
 	dropdown.SetSelectedFunc(func(name string, _ int) {

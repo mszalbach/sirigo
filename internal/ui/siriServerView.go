@@ -27,11 +27,11 @@ func newSiriServerView(
 
 	autoresponseDropdown := tview.NewDropDown().SetLabel("Client auto-response: ")
 
-	templateNames, templateErr := responseTemplates.TemplateNames()
-	if templateErr == nil {
+	templateNames, err := responseTemplates.TemplateNames()
+	if err == nil {
 		autoresponseDropdown.SetOptions(templateNames, nil)
 	} else {
-		errorChannel <- templateErr
+		errorChannel <- err
 	}
 
 	autoresponseDropdown.SetOptions(templateNames, nil)

@@ -61,9 +61,8 @@ func executeTemplate(content string, data data) (string, error) {
 	}
 
 	var bytesBuffer bytes.Buffer
-	terr := template.Execute(&bytesBuffer, data)
-	if terr != nil {
-		return "", terr
+	if err := template.Execute(&bytesBuffer, data); err != nil {
+		return "", err
 	}
 	return bytesBuffer.String(), nil
 }
