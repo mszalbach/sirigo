@@ -17,7 +17,7 @@ type AppMock struct {
 }
 
 func (app *AppMock) QueueUpdateDraw(f func()) *tview.Application {
-	// just execute the QueueUpdate no need for async stuff in the test
+	// just execute the function no need for async stuff in the test
 	f()
 	return nil
 }
