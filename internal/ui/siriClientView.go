@@ -9,14 +9,10 @@ import (
 
 type siriClientView struct {
 	*tview.Flex
-	model        *siriClientViewModel
 	siriClient   siri.Client
 	errorChannel chan<- error
-}
-
-type siriClientViewModel struct {
-	body string
-	url  string
+	urlInput     *tview.InputField
+	requestArea  *tview.TextArea
 }
 
 func newSiriClientView(
@@ -24,24 +20,13 @@ func newSiriClientView(
 	sendTemplates siri.TemplateCache,
 	errorChannel chan<- error,
 ) siriClientView {
-	model := siriClientViewModel{
-		body: "",
-		url:  "",
-	}
-
 	urlInput := tview.NewInputField().SetPlaceholder("http://localhost:8080")
 	urlInput.SetLabel("URL: ")
 	urlInput.SetFieldWidth(80)
 	urlInput.SetText(siriClient.ServerURL)
-	urlInput.SetChangedFunc(func(url string) {
-		model.url = url
-	})
 
 	siriClientRequestArea := tview.NewTextArea()
 	siriClientRequestArea.SetBorder(true).SetTitle(fmt.Sprintf("Client Request (clientRef: %s)", siriClient.ClientRef))
-	siriClientRequestArea.SetChangedFunc(func() {
-		model.body = siriClientRequestArea.GetText()
-	})
 
 	dropdown := tview.NewDropDown().SetLabel("Templates: ")
 
@@ -59,10 +44,7 @@ func newSiriClientView(
 			return
 		}
 		urlPath := siri.GetURLPathFromTemplate(requestTemplate)
-		// If no server URL is configured, let the user enter the full URL
-		if siriClient.ServerURL != "" {
-			urlInput.SetText(siriClient.ServerURL + urlPath)
-		}
+		urlInput.SetText(siriClient.ServerURL + urlPath)
 		siriClientRequestArea.SetText(requestTemplate, false)
 	})
 
@@ -75,13 +57,14 @@ func newSiriClientView(
 	return siriClientView{
 		Flex:         flex,
 		siriClient:   siriClient,
-		model:        &model,
 		errorChannel: errorChannel,
+		urlInput:     urlInput,
+		requestArea:  siriClientRequestArea,
 	}
 }
 
 func (sc siriClientView) send() siri.ServerResponse {
-	res, err := sc.siriClient.Send(sc.model.url, sc.model.body)
+	res, err := sc.siriClient.Send(sc.urlInput.GetText(), sc.requestArea.GetText())
 	if err != nil {
 		sc.errorChannel <- err
 	}
