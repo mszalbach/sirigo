@@ -92,3 +92,21 @@ Focus documentation efforts on C4 diagrams and ADRs rather than producing a full
 - Documentation remains concise and focused on decisions and high-level system structure
 - Some detailed sections from a full Arc42 document may be omitted, but the most important architectural decisions and context will be captured
 - This approach should be easier to maintain for a small project
+
+## 20251213-1 Not using an architecture pattern like MVP for the TUI
+
+accepted
+
+### Context
+
+An architecture pattern like MVP increases testability and separates logic from views. However, this introduces additional interfaces, functions, and structs to maintain the separation.
+
+### Decision
+
+The current TUI implementation has relatively simple UI elements. Applying MVP would distribute related code across multiple files, making it harder to understand the complete flow in one place. Since the TUI is view-focused with minimal business logic, the overhead of the pattern outweighs the benefits at this stage. If the project becomes significantly more complex, this decision should be reassessed.
+
+### Consequences
+
+- TUI logic and visual things are cluttered into one file
+- testability is not possible without rendering the TUI in the tests and checking the outcome
+- overall LOC will be less without the pattern and parts beloging togehter will stay togehter
