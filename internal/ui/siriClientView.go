@@ -16,6 +16,7 @@ type siriClientView struct {
 }
 
 func newSiriClientView(
+	app tuiApp,
 	siriClient siri.Client,
 	sendTemplates siri.TemplateCache,
 	errorChannel chan<- error,
@@ -48,9 +49,12 @@ func newSiriClientView(
 		siriClientRequestArea.SetText(requestTemplate, false)
 	})
 
+	// register focus order
+	app.register(urlInput, dropdown, siriClientRequestArea)
+
 	flex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(urlInput, 2, 0, true).
+		AddItem(urlInput, 2, 0, false).
 		AddItem(dropdown, 2, 0, false).
 		AddItem(siriClientRequestArea, 0, 1, false)
 

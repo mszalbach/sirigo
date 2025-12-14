@@ -9,7 +9,7 @@ type statusBar struct {
 	textView *tview.TextView
 }
 
-func newStatusBar(app queueUpdateDrawer, errorChannel chan error) statusBar {
+func newStatusBar(app tuiApp, errorChannel chan error) statusBar {
 	textview := tview.NewTextView()
 	textview.SetDynamicColors(true)
 

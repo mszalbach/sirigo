@@ -10,10 +10,17 @@ import (
 	"github.com/rivo/tview"
 )
 
-// queueUpdateDrawer allows a component to use tview async safe updating of components.
-// Requiered for async routines and to allow mocking this in tests since a tview.Application is not so gut testable (at my current understanding)
-type queueUpdateDrawer interface {
+// tuiApp allows a component to use features of the tview.Application and custom provided ones.
+// Requiered for mocking this in tests since a tview.Application is not so good testable (at my current understanding)
+type tuiApp interface {
 	QueueUpdateDraw(f func()) *tview.Application
+	register(prioritizedComponents ...tview.Primitive)
+}
+
+// SiriApp is the main tview application for the SIRI client
+type SiriApp struct {
+	*tview.Application
+	focusComponents []tview.Primitive
 }
 
 // NewSiriApp creates the tview application to interact with a SIRI server
@@ -22,20 +29,23 @@ func NewSiriApp(
 	sendTemplates siri.TemplateCache,
 	responseTemplates siri.TemplateCache,
 	cancel context.CancelFunc,
-) *tview.Application {
-	app := tview.NewApplication()
-	app.SetTitle(fmt.Sprintf("Sirigo (%s)", siriClient.ClientRef))
+) *SiriApp {
+	siriApp := &SiriApp{
+		Application:     tview.NewApplication(),
+		focusComponents: []tview.Primitive{},
+	}
+	siriApp.SetTitle(fmt.Sprintf("Sirigo (%s)", siriClient.ClientRef))
 
 	initStyles()
-	app.EnableMouse(true)
-	app.EnablePaste(true)
+	siriApp.EnableMouse(true)
+	siriApp.EnablePaste(true)
 
 	// Building UI elements
 	errorChannel := make(chan error, 5)
-	statusBar := newStatusBar(app, errorChannel)
+	statusBar := newStatusBar(siriApp, errorChannel)
 	keymap := newKeymap()
-	siriClientView := newSiriClientView(siriClient, sendTemplates, errorChannel)
-	siriServerView := newSiriServerView(app, siriClient, responseTemplates, errorChannel)
+	siriClientView := newSiriClientView(siriApp, siriClient, sendTemplates, errorChannel)
+	siriServerView := newSiriServerView(siriApp, siriClient, responseTemplates, errorChannel)
 
 	// Building layout
 	bodyFlex := tview.NewFlex().
@@ -49,10 +59,15 @@ func NewSiriApp(
 		SetDirection(tview.FlexRow).
 		AddItem(bodyFlex, 0, 1, false).
 		AddItem(footerFlex, 2, 0, false)
-	app.SetRoot(appFlex, true)
+	siriApp.SetRoot(appFlex, true)
+
+	// setting initial focus
+	if len(siriApp.focusComponents) > 0 {
+		siriApp.SetFocus(siriApp.focusComponents[0])
+	}
 
 	// Installing shortcuts
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	siriApp.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlX:
 			cancel()
@@ -62,9 +77,41 @@ func NewSiriApp(
 			return nil
 		case tcell.KeyCtrlC:
 			return nil
+		case tcell.KeyTab:
+			nextFocus(siriApp)
+		case tcell.KeyBacktab:
+			prevFocus(siriApp)
 		}
 		return event
 	})
 
-	return app
+	return siriApp
+}
+
+func (app *SiriApp) register(prioritizedComponents ...tview.Primitive) {
+	app.focusComponents = append(app.focusComponents, prioritizedComponents...)
+}
+
+func nextFocus(app *SiriApp) {
+	switchFocus(app, 1)
+}
+
+func prevFocus(app *SiriApp) {
+	switchFocus(app, -1)
+}
+
+func switchFocus(app *SiriApp, direction int) {
+	focusElementsCount := len(app.focusComponents)
+	if focusElementsCount == 0 {
+		return
+	}
+	currentFocus := app.GetFocus()
+	for i, component := range app.focusComponents {
+		if component == currentFocus {
+			nextFocus := app.focusComponents[(i+direction+focusElementsCount)%focusElementsCount]
+			app.SetFocus(nextFocus)
+			return
+		}
+	}
+	app.SetFocus(app.focusComponents[0])
 }

@@ -8,13 +8,13 @@ import (
 )
 
 type siriServerView struct {
-	app queueUpdateDrawer
+	app tuiApp
 	*tview.Flex
 	serverResponseTextView *tview.TextView
 }
 
 func newSiriServerView(
-	app queueUpdateDrawer,
+	app tuiApp,
 	siriClient siri.Client,
 	responseTemplates siri.TemplateCache,
 	errorChannel chan<- error,
@@ -52,6 +52,9 @@ func newSiriServerView(
 
 	go listenForServerRequests(app, serverRequestTextView, siriClient)
 
+	// register focus order
+	app.register(autoresponseDropdown, serverResponseTextView, serverRequestTextView)
+
 	return siriServerView{
 		Flex:                   siriServerFlex,
 		serverResponseTextView: serverResponseTextView,
@@ -59,7 +62,7 @@ func newSiriServerView(
 	}
 }
 
-func listenForServerRequests(app queueUpdateDrawer, serverRequestTextView *tview.TextView, siriClient siri.Client) {
+func listenForServerRequests(app tuiApp, serverRequestTextView *tview.TextView, siriClient siri.Client) {
 	for req := range siriClient.ServerRequest {
 		body := fmt.Sprintf("<!-- %s%s -->\n%s", req.RemoteAddress, req.URL, req.Body)
 		serverRequestTextView.ScrollToBeginning()

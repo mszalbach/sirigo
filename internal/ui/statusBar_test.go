@@ -22,6 +22,10 @@ func (app *AppMock) QueueUpdateDraw(f func()) *tview.Application {
 	return nil
 }
 
+func (app *AppMock) register(_ ...tview.Primitive) {
+	// not needed for this test
+}
+
 var app = new(AppMock)
 
 func newTestScreen(t *testing.T) tcell.SimulationScreen {
