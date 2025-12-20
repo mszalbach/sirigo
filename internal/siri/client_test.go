@@ -38,7 +38,9 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 
 	// When
 	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
-	actual, err := client.Send(server.URL+"/siri/2.1/situation-exchange", `
+	actual, err := client.Send(ClientRequest{
+		URL: server.URL + "/siri/2.1/situation-exchange",
+		Body: `
 <Siri>
 	<ServiceRequest>
 		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
@@ -49,7 +51,8 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 			<LineRef>52</LineRef>
 		</SituationExchangeRequest>
 	</ServiceRequest>
-</Siri>`)
+</Siri>`,
+	})
 
 	require.NoError(t, err)
 
@@ -102,7 +105,9 @@ func Test_siri_client_body_is_a_template(t *testing.T) {
 
 	// When
 	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
-	_, err := client.Send(server.URL+"/siri/2.1/situation-exchange", `
+	_, err := client.Send(ClientRequest{
+		URL: server.URL + "/siri/2.1/situation-exchange",
+		Body: `
 <Siri>
 	<ServiceRequest>
 		<RequestTimestamp>2004-12-17T09:30:47-05:00</RequestTimestamp>
@@ -113,7 +118,8 @@ func Test_siri_client_body_is_a_template(t *testing.T) {
 			<LineRef>52</LineRef>
 		</SituationExchangeRequest>
 	</ServiceRequest>
-</Siri>`)
+</Siri>`,
+	})
 
 	require.NoError(t, err)
 }
@@ -200,7 +206,10 @@ func Test_client_send_understands_content_types(t *testing.T) {
 
 			// When
 			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
-			actual, err := client.Send(server.URL+"/siri/v2", "IGNORE")
+			actual, err := client.Send(ClientRequest{
+				URL:  server.URL + "/siri/v2",
+				Body: "IGNORE",
+			})
 			require.NoError(t, err)
 
 			// Then

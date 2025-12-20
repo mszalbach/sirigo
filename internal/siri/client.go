@@ -23,20 +23,28 @@ type Client struct {
 	serverRequestWriter chan ServerRequest
 }
 
-// AutoClientResponse should be used to answer server requests
+// ClientRequest represents a request sent by the SIRI client to the server
+type ClientRequest struct {
+	URL  string
+	Body string
+}
+
+// AutoClientResponse represents the automatic response sent by the client to the SIRI server
+// used for requests such as DataReady requests
+// there is currently only one automatic response for all requests
 type AutoClientResponse struct {
 	Body   string
 	Status int
 }
 
-// ServerResponse returned when sending requests to the server
+// ServerResponse represents the response from the SIRI server to a client request
 type ServerResponse struct {
 	Body     string
 	Status   int
 	Language string
 }
 
-// ServerRequest represents the requests the SIRI server sends to the client, such as DataReady requests
+// ServerRequest represents a request sent by the SIRI server to the client
 type ServerRequest struct {
 	RemoteAddress string
 	URL           string
@@ -67,13 +75,13 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 var httpclient = http.Client{Timeout: 10 * time.Second}
 
 // Send sends a message to the SIRI server
-func (c Client) Send(url string, body string) (ServerResponse, error) {
-	executedBody, err := executeTemplate(body, data{Now: time.Now(), ClientRef: c.ClientRef})
+func (c Client) Send(clientRequest ClientRequest) (ServerResponse, error) {
+	executedBody, err := executeTemplate(clientRequest.Body, data{Now: time.Now(), ClientRef: c.ClientRef})
 	if err != nil {
 		return ServerResponse{}, err
 	}
 
-	res, err := httpclient.Post(url, "application/xml", strings.NewReader(executedBody))
+	res, err := httpclient.Post(clientRequest.URL, "application/xml", strings.NewReader(executedBody))
 	if err != nil {
 		return ServerResponse{}, err
 	}

@@ -68,7 +68,7 @@ func newSiriClientView(
 }
 
 func (sc siriClientView) send() siri.ServerResponse {
-	res, err := sc.siriClient.Send(sc.urlInput.GetText(), sc.requestArea.GetText())
+	res, err := sc.siriClient.Send(siri.ClientRequest{URL: sc.urlInput.GetText(), Body: sc.requestArea.GetText()})
 	if err != nil {
 		sc.errorChannel <- err
 	}
