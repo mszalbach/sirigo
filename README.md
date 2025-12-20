@@ -60,7 +60,6 @@ You can open a GitHub issue.
 
 * [x] Have a TUI that can communicate with a SIRI/VDV server
 * [ ] Log requests and responses
-* [ ] Make all features available as CLI commands
 
 ## Contributing
 
