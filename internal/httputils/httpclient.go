@@ -8,13 +8,6 @@ import (
 	"time"
 )
 
-const (
-	// ContentTypeXML is the MIME type for XML content
-	ContentTypeXML = "application/xml"
-	// HeaderContentType is the HTTP header key for Content-Type
-	HeaderContentType = "Content-Type"
-)
-
 // HTTPClient is a simple HTTP client wrapper
 type HTTPClient struct {
 	client http.Client
@@ -62,9 +55,4 @@ func (hc HTTPClient) Do(req *http.Request) (Response, error) {
 		StatusCode: res.StatusCode,
 		Header:     res.Header,
 	}, nil
-}
-
-// GetHeaderValue retrieves the value of a specific header from the HTTP header map
-func GetHeaderValue(header http.Header, key string) string {
-	return header.Get(key)
 }

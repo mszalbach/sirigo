@@ -6,9 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"mime"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/mszalbach/sirigo/internal/httputils"
@@ -21,9 +19,9 @@ type Client struct {
 	ServerURL           string
 	ServerRequest       <-chan ServerRequest
 	AutoClientResponse  *AutoClientResponse
-	server              *http.Server
 	serverRequestWriter chan ServerRequest
 	httpclient          httputils.HTTPClient
+	httpserver          *httputils.HTTPServer
 }
 
 // ClientRequest represents a request sent by the SIRI client to the server
@@ -69,10 +67,7 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 			Status: http.StatusOK,
 		},
 		httpclient: httputils.NewHTTPClient(),
-		server: &http.Server{
-			Addr:              address,
-			ReadHeaderTimeout: 5 * time.Second,
-		},
+		httpserver: httputils.NewHTTPServer(address),
 	}
 }
 
@@ -89,25 +84,25 @@ func (c Client) Send(clientRequest ClientRequest) (ServerResponse, error) {
 	return ServerResponse{
 		Body:     res.Body,
 		Status:   res.StatusCode,
-		Language: getLanguage(httputils.GetHeaderValue(res.Header, httputils.HeaderContentType)),
+		Language: httputils.GetLanguage(res.Header),
 	}, nil
 }
 
 // ListenAndServe starts the HTTP server needed to listen for SIRI server requests such as DataReady requests
-func (c Client) ListenAndServe() error {
-	c.server.Handler = c.createHandler()
-	return c.server.ListenAndServe()
+func (c *Client) ListenAndServe() error {
+	c.httpserver.Handler = c.createHandler()
+	return c.httpserver.ListenAndServe()
+}
+
+func (c Client) createHandler() http.Handler {
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /", c.handleServerRequests)
+	return mux
 }
 
 // Stop stops the http server for the given context. Uses to be able to correctly stop the server from somewhere else
 func (c Client) Stop(ctx context.Context) error {
-	return c.server.Shutdown(ctx)
-}
-
-func (c Client) createHandler() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("POST /", c.handleServerRequests)
-	return mux
+	return c.httpserver.Shutdown(ctx)
 }
 
 func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +122,7 @@ func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 		RemoteAddress: r.RemoteAddr,
 		URL:           r.URL.RequestURI(),
 		Body:          string(bytesBody),
-		Language:      getLanguage(r.Header.Get("Content-Type")),
+		Language:      httputils.GetLanguage(r.Header),
 	}
 
 	c.serverRequestWriter <- request
@@ -145,18 +140,4 @@ func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 	if ferr != nil {
 		slog.Error("Could not write auto response", slog.Any("error", ferr))
 	}
-}
-
-func getLanguage(contentType string) string {
-	m, _, err := mime.ParseMediaType(contentType)
-	if err != nil {
-		return "plaintext"
-	}
-
-	parts := strings.Split(m, "/")
-	if len(parts) < 2 {
-		return "plaintext"
-	}
-
-	return parts[1]
 }
