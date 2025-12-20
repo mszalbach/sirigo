@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/interfaces/siri/2.1/estimated-timetable.xml",
+    "bodyPatterns": [
+      {
+        "matchesXPath": "//DataSupplyRequest//ConsumerRef[text()='slow']"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 5000,
+    "headers": {
+      "Content-Type": "text/xml"
+    },
+    "bodyFileName": "siri/et/estimatedTimetable_response.xml"
+  }
+}
