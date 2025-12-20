@@ -43,13 +43,13 @@ Template files are written with [Go template](https://pkg.go.dev/text/template) 
 
 Sirigo provides the following variables and functions you can use:
 
-| name             | description                                                         | example                                                                               |
-| ---------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| ClientRef        | Variable with the configured client reference                       | `<ConsumerRef>{{ .ClientRef }}</ConsumerRef>`                                         |
-| Now              | Variable with the current time as a Go time                         | use this with the dateTime function                                                   |
-| dateTime         | Function to convert Go times into xs:dateTime                       | `<RequestTimestamp>{{ dateTime .Now }}</RequestTimestamp>`                            |
-| addTime          | Function to add durations to a time                                 | `<InitialTerminationTime>{{ dateTime (addTime .Now "2h") }}</InitialTerminationTime>` |
-| URL path comment | Helper to set the URL path where a client request should be sent to | <!-- path: /siri/et.xml -->                                                           |
+| name             | description                                                                                               | example                                                                               |
+| ---------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| ClientRef        | Variable with the configured client reference                                                             | `<ConsumerRef>{{ .ClientRef }}</ConsumerRef>`                                         |
+| Now              | Variable with the current time as a Go time                                                               | use this with the dateTime function                                                   |
+| dateTime         | Function to convert Go times into xs:dateTime                                                             | `<RequestTimestamp>{{ dateTime .Now }}</RequestTimestamp>`                            |
+| addTime          | Function to add durations to a time                                                                       | `<InitialTerminationTime>{{ dateTime (addTime .Now "2h") }}</InitialTerminationTime>` |
+| URL path comment | Helper to set the URL path where a client request should be sent to. Add this xml comment in the template | \<!-- path: /siri/et.xml -->                                                          |
 
 
 ## Support
