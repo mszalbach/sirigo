@@ -115,6 +115,7 @@ func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 			Language:      "plaintext",
 		}
 		c.serverRequestWriter <- request
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
