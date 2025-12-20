@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/mszalbach/sirigo/internal/httputils"
 )
 
 // Client contains everything needed for a SIRI client
@@ -21,6 +23,7 @@ type Client struct {
 	AutoClientResponse  *AutoClientResponse
 	server              *http.Server
 	serverRequestWriter chan ServerRequest
+	httpclient          httputils.HTTPClient
 }
 
 // ClientRequest represents a request sent by the SIRI client to the server
@@ -65,6 +68,7 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 			Body:   "",
 			Status: http.StatusOK,
 		},
+		httpclient: httputils.NewHTTPClient(),
 		server: &http.Server{
 			Addr:              address,
 			ReadHeaderTimeout: 5 * time.Second,
@@ -72,28 +76,20 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 	}
 }
 
-var httpclient = http.Client{Timeout: 10 * time.Second}
-
 // Send sends a message to the SIRI server
 func (c Client) Send(clientRequest ClientRequest) (ServerResponse, error) {
 	executedBody, err := executeTemplate(clientRequest.Body, data{Now: time.Now(), ClientRef: c.ClientRef})
 	if err != nil {
 		return ServerResponse{}, err
 	}
-
-	res, err := httpclient.Post(clientRequest.URL, "application/xml", strings.NewReader(executedBody))
-	if err != nil {
-		return ServerResponse{}, err
-	}
-	defer res.Body.Close()
-	bytesBody, err := io.ReadAll(res.Body)
+	res, err := c.httpclient.PostXML(clientRequest.URL, executedBody)
 	if err != nil {
 		return ServerResponse{}, err
 	}
 	return ServerResponse{
-		Body:     string(bytesBody),
+		Body:     res.Body,
 		Status:   res.StatusCode,
-		Language: getLanguage(res.Header.Get("Content-Type")),
+		Language: getLanguage(httputils.GetHeaderValue(res.Header, httputils.HeaderContentType)),
 	}, nil
 }
 
