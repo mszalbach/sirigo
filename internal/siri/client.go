@@ -90,14 +90,14 @@ func (c Client) Send(clientRequest ClientRequest) (ServerResponse, error) {
 
 // ListenAndServe starts the HTTP server needed to listen for SIRI server requests such as DataReady requests
 func (c *Client) ListenAndServe() error {
-	c.httpserver.Handler = c.createHandler()
+	// return is only for easier testing
+	_ = c.createHandler()
 	return c.httpserver.ListenAndServe()
 }
 
-func (c Client) createHandler() http.Handler {
-	mux := http.NewServeMux()
-	mux.HandleFunc("POST /", c.handleServerRequests)
-	return mux
+func (c *Client) createHandler() http.Handler {
+	c.httpserver.HandleFunc("POST /", c.handleServerRequests)
+	return c.httpserver.Handler
 }
 
 // Stop stops the http server for the given context. Uses to be able to correctly stop the server from somewhere else
