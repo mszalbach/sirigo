@@ -17,11 +17,12 @@ linters:
     - unused
     - thelper
     - errorlint
+    - usestdlibvars
+    - misspell
   exclusions:
-    rules:
-      - linters: [errcheck]
-        # no need to check defer errors
-        source: "^\\s*defer\\s+"
+    presets:
+      - std-error-handling
+    warn-unused: true
   settings:
     unused:
       field-writes-are-uses: false
