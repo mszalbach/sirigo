@@ -96,11 +96,12 @@ func (tc TemplateCache) TemplateNames() ([]string, error) {
 	return templateNames, nil
 }
 
+var urlPathRegexp = regexp.MustCompile(`<!--\s*path:\s*(.*?)\s*-->`)
+
 // GetURLPathFromTemplate finds a comment with an url path
 // used to specify where a SIRI client request should be sent to
 func GetURLPathFromTemplate(template string) string {
-	re := regexp.MustCompile(`<!--\s*path:\s*(.*?)\s*-->`)
-	matches := re.FindStringSubmatch(template)
+	matches := urlPathRegexp.FindStringSubmatch(template)
 	if len(matches) < 2 {
 		return ""
 	}
