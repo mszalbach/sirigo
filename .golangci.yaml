@@ -14,15 +14,26 @@ linters:
     - revive
     - ineffassign
     - nilnesserr
+    - unused
+    - thelper
+    - errorlint
   exclusions:
     rules:
       - linters: [errcheck]
         # no need to check defer errors
         source: "^\\s*defer\\s+"
+  settings:
+    unused:
+      field-writes-are-uses: false
+      exported-fields-are-used: false
+    gocritic:
+      enable-all: true
+      disabled-checks:
+        - paramTypeCombine # I find it more clear to have explicit types in parameters
 formatters:
   enable:
     - gofumpt
-    - golines  
+    - golines
   settings:
     golines:
-      max-len: 120  
+      max-len: 120

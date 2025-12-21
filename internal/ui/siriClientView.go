@@ -9,7 +9,7 @@ import (
 
 type siriClientView struct {
 	*tview.Flex
-	siriClient   siri.Client
+	siriClient   *siri.Client
 	errorChannel chan<- error
 	urlInput     *tview.InputField
 	requestArea  *tview.TextArea
@@ -17,7 +17,7 @@ type siriClientView struct {
 
 func newSiriClientView(
 	app tuiApp,
-	siriClient siri.Client,
+	siriClient *siri.Client,
 	sendTemplates siri.TemplateCache,
 	errorChannel chan<- error,
 ) siriClientView {

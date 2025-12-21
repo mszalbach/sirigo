@@ -14,7 +14,6 @@ import (
 
 // Client contains everything needed for a SIRI client
 type Client struct {
-	clientAddress       string
 	ClientRef           string
 	ServerURL           string
 	ServerRequest       <-chan ServerRequest
@@ -59,7 +58,6 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 	return Client{
 		ClientRef:           clientRef,
 		ServerURL:           serverURL,
-		clientAddress:       address,
 		ServerRequest:       serverRequest,
 		serverRequestWriter: serverRequest,
 		AutoClientResponse: &AutoClientResponse{
@@ -72,7 +70,7 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 }
 
 // Send sends a message to the SIRI server
-func (c Client) Send(clientRequest ClientRequest) (ServerResponse, error) {
+func (c *Client) Send(clientRequest ClientRequest) (ServerResponse, error) {
 	executedBody, err := executeTemplate(clientRequest.Body, data{Now: time.Now(), ClientRef: c.ClientRef})
 	if err != nil {
 		return ServerResponse{}, err
@@ -101,11 +99,11 @@ func (c *Client) createHandler() http.Handler {
 }
 
 // Stop stops the http server for the given context. Uses to be able to correctly stop the server from somewhere else
-func (c Client) Stop(ctx context.Context) error {
+func (c *Client) Stop(ctx context.Context) error {
 	return c.httpserver.Shutdown(ctx)
 }
 
-func (c Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
+func (c *Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 	bytesBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		request := ServerRequest{

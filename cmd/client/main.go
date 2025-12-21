@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"os"
@@ -40,7 +41,7 @@ func main() {
 		panic(err)
 	}
 
-	app := ui.NewSiriApp(siriClient, clientTemplates, serverTemplates, cancel)
+	app := ui.NewSiriApp(&siriClient, clientTemplates, serverTemplates, cancel)
 
 	go func() {
 		if err := app.Run(); err != nil {
@@ -49,7 +50,7 @@ func main() {
 		}
 	}()
 	go func() {
-		if err := siriClient.ListenAndServe(); err != http.ErrServerClosed {
+		if err := siriClient.ListenAndServe(); errors.Is(err, http.ErrServerClosed) {
 			slog.Error(
 				"SIRI client could not be started",
 				slog.String("address", cfg.clientPort),

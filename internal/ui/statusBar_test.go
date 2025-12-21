@@ -29,6 +29,7 @@ func (app *AppMock) register(_ ...tview.Primitive) {
 var app = new(AppMock)
 
 func newTestScreen(t *testing.T) tcell.SimulationScreen {
+	t.Helper()
 	screen := tcell.NewSimulationScreen("")
 	err := screen.Init()
 	require.NoError(t, err)

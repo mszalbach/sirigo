@@ -15,7 +15,7 @@ type siriServerView struct {
 
 func newSiriServerView(
 	app tuiApp,
-	siriClient siri.Client,
+	siriClient *siri.Client,
 	responseTemplates siri.TemplateCache,
 	errorChannel chan<- error,
 ) siriServerView {
@@ -62,7 +62,7 @@ func newSiriServerView(
 	}
 }
 
-func listenForServerRequests(app tuiApp, serverRequestTextView *tview.TextView, siriClient siri.Client) {
+func listenForServerRequests(app tuiApp, serverRequestTextView *tview.TextView, siriClient *siri.Client) {
 	for req := range siriClient.ServerRequest {
 		body := fmt.Sprintf("<!-- %s%s -->\n%s", req.RemoteAddress, req.URL, req.Body)
 		serverRequestTextView.ScrollToBeginning()

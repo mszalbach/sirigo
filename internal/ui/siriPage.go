@@ -11,7 +11,7 @@ type siriPage struct {
 	siriServerView siriServerView
 }
 
-func newSiriPage(siriApp tuiApp, siriClient siri.Client,
+func newSiriPage(siriApp tuiApp, siriClient *siri.Client,
 	sendTemplates siri.TemplateCache,
 	responseTemplates siri.TemplateCache,
 ) *siriPage {
@@ -42,7 +42,7 @@ func newSiriPage(siriApp tuiApp, siriClient siri.Client,
 	return &siriPage
 }
 
-func (sp siriPage) send() {
+func (sp *siriPage) send() {
 	response := sp.siriClientView.send()
 	sp.siriServerView.setResponse(response)
 }

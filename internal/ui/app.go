@@ -25,7 +25,7 @@ type SiriApp struct {
 
 // NewSiriApp creates the tview application to interact with a SIRI server
 func NewSiriApp(
-	siriClient siri.Client,
+	siriClient *siri.Client,
 	sendTemplates siri.TemplateCache,
 	responseTemplates siri.TemplateCache,
 	cancel context.CancelFunc,

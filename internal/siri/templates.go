@@ -55,13 +55,13 @@ func (tc TemplateCache) GetTemplate(name string) (string, error) {
 
 // executeTemplate finds the template and executes it with the provided data
 func executeTemplate(content string, data data) (string, error) {
-	template, err := template.New("siri").Funcs(funcs).Parse(content)
+	siriTemplate, err := template.New("siri").Funcs(funcs).Parse(content)
 	if err != nil {
 		return "", err
 	}
 
 	var bytesBuffer bytes.Buffer
-	if err := template.Execute(&bytesBuffer, data); err != nil {
+	if err := siriTemplate.Execute(&bytesBuffer, data); err != nil {
 		return "", err
 	}
 	return bytesBuffer.String(), nil
@@ -100,8 +100,8 @@ var urlPathRegexp = regexp.MustCompile(`<!--\s*path:\s*(.*?)\s*-->`)
 
 // GetURLPathFromTemplate finds a comment with an url path
 // used to specify where a SIRI client request should be sent to
-func GetURLPathFromTemplate(template string) string {
-	matches := urlPathRegexp.FindStringSubmatch(template)
+func GetURLPathFromTemplate(siriTemplate string) string {
+	matches := urlPathRegexp.FindStringSubmatch(siriTemplate)
 	if len(matches) < 2 {
 		return ""
 	}
