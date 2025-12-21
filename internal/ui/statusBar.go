@@ -5,8 +5,7 @@ import (
 )
 
 type statusBar struct {
-	tview.Primitive
-	textView *tview.TextView
+	*tview.TextView
 }
 
 func newStatusBar(app tuiApp, errorChannel chan error) statusBar {
@@ -22,7 +21,6 @@ func newStatusBar(app tuiApp, errorChannel chan error) statusBar {
 	}()
 
 	return statusBar{
-		Primitive: textview,
-		textView:  textview,
+		textview,
 	}
 }

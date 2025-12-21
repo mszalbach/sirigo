@@ -40,28 +40,15 @@ func NewSiriApp(
 	siriApp.EnableMouse(true)
 	siriApp.EnablePaste(true)
 
-	// Building UI elements
-	errorChannel := make(chan error, 5)
-	statusBar := newStatusBar(siriApp, errorChannel)
-	keymap := newKeymap()
-	siriClientView := newSiriClientView(siriApp, siriClient, sendTemplates, errorChannel)
-	siriServerView := newSiriServerView(siriApp, siriClient, responseTemplates, errorChannel)
+	siriPage := newSiriPage(siriApp, siriClient, sendTemplates, responseTemplates)
+	helpPage := newHelpPage()
 
-	// Building layout
-	bodyFlex := tview.NewFlex().
-		AddItem(siriClientView, 0, 1, false).
-		AddItem(siriServerView, 0, 1, false)
+	pages := tview.NewPages()
+	pages.AddAndSwitchToPage("siri", siriPage, true)
+	pages.AddPage("help", helpPage, true, false)
 
-	footerFlex := tview.NewFlex().
-		AddItem(keymap, 0, 1, false).AddItem(statusBar, 0, 1, false)
+	siriApp.SetRoot(pages, true).SetFocus(pages)
 
-	appFlex := tview.NewFlex().
-		SetDirection(tview.FlexRow).
-		AddItem(bodyFlex, 0, 1, false).
-		AddItem(footerFlex, 2, 0, false)
-	siriApp.SetRoot(appFlex, true)
-
-	// setting initial focus
 	if len(siriApp.focusComponents) > 0 {
 		siriApp.SetFocus(siriApp.focusComponents[0])
 	}
@@ -72,8 +59,7 @@ func NewSiriApp(
 		case tcell.KeyCtrlX:
 			cancel()
 		case tcell.KeyCtrlO:
-			response := siriClientView.send()
-			siriServerView.setResponse(response)
+			siriPage.send()
 			return nil
 		case tcell.KeyCtrlC:
 			return nil
@@ -81,6 +67,12 @@ func NewSiriApp(
 			nextFocus(siriApp)
 		case tcell.KeyBacktab:
 			prevFocus(siriApp)
+		case tcell.KeyF1:
+			if pages.GetPage("siri").HasFocus() {
+				pages.SwitchToPage("help")
+			} else {
+				pages.SwitchToPage("siri")
+			}
 		}
 		return event
 	})

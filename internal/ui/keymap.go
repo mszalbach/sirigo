@@ -6,24 +6,23 @@ import (
 	"github.com/rivo/tview"
 )
 
-var (
-	descriptionColor = colorTag(colors["foreground"], colors["background"])
-	keyColor         = colorTag(colors["background"], colors["selection"])
-
-	keys = []struct {
-		key         string
-		description string
-	}{
-		{
-			key:         "^O",
-			description: "Send",
-		},
-		{
-			key:         "^X",
-			description: "Exit",
-		},
-	}
-)
+var keys = []struct {
+	key         string
+	description string
+}{
+	{
+		key:         "F1",
+		description: "Help",
+	},
+	{
+		key:         "Ctrl-O",
+		description: "Send",
+	},
+	{
+		key:         "Ctrl-X",
+		description: "Exit",
+	},
+}
 
 func newKeymap() *tview.TextView {
 	keyMap := tview.NewTextView()

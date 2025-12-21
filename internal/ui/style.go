@@ -8,17 +8,22 @@ import (
 	"github.com/rivo/tview"
 )
 
-// Copied from k9s' Dracula style
-var colors = map[string]tcell.Color{
-	"foreground": tcell.GetColor("#f8f8f2"),
-	"background": tcell.GetColor("#282a36"),
-	"selection":  tcell.GetColor("#44475a"),
-	"purple":     tcell.GetColor("#bd93f9"),
-	"orange":     tcell.GetColor("#ffb86c"),
-	"yellow":     tcell.GetColor("#f1fa8c"),
-	"pink":       tcell.GetColor("#ff79c6"),
-	"comment":    tcell.GetColor("#6272a4"),
-}
+var (
+	// Copied from k9s' Dracula style
+	colors = map[string]tcell.Color{
+		"foreground": tcell.GetColor("#f8f8f2"),
+		"background": tcell.GetColor("#282a36"),
+		"selection":  tcell.GetColor("#44475a"),
+		"purple":     tcell.GetColor("#bd93f9"),
+		"orange":     tcell.GetColor("#ffb86c"),
+		"yellow":     tcell.GetColor("#f1fa8c"),
+		"pink":       tcell.GetColor("#ff79c6"),
+		"comment":    tcell.GetColor("#6272a4"),
+	}
+
+	descriptionColor = colorTag(colors["foreground"], colors["background"])
+	keyColor         = colorTag(colors["orange"], colors["selection"])
+)
 
 const codeStyle = "dracula"
 
