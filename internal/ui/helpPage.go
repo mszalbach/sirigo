@@ -17,6 +17,9 @@ func newHelpPage() *helpPage {
 	// TODO use colors from style.go
 	textview.SetText(`Sirigo is designed to be a SIRI client to send and receive SIRI messages.
 
+Some things can be configured when starting Sirigo.
+Use -h or --help to see all available command line options.
+
 Global Keybindings:
 
 F1: 	Show this help page / Close this help page
