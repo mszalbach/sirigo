@@ -135,8 +135,5 @@ func (c *Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(c.AutoClientResponse.Status)
-	_, ferr := fmt.Fprint(w, responseBody)
-	if ferr != nil {
-		slog.Error("Could not write auto response", slog.Any("error", ferr.Error()))
-	}
+	fmt.Fprint(w, responseBody)
 }

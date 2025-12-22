@@ -18,7 +18,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 		assert.Equal(t, "/siri/2.1/situation-exchange", req.URL.String())
 		rw.Header().Set("Content-Type", "application/xml")
 		rw.WriteHeader(http.StatusOK)
-		_, err := fmt.Fprint(rw, `
+		fmt.Fprint(rw, `
 <Siri>
 	<SubscriptionResponse>
 		<ResponseTimestamp>2004-12-17T09:30:47-05:00</ResponseTimestamp>
@@ -32,7 +32,6 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 		</ResponseStatus>
 	</SubscriptionResponse>
 </Siri>`)
-		assert.NoError(t, err)
 	}))
 	defer server.Close()
 
