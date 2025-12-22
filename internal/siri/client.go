@@ -19,7 +19,7 @@ type Client struct {
 	ServerRequest       <-chan ServerRequest
 	AutoClientResponse  *AutoClientResponse
 	serverRequestWriter chan ServerRequest
-	httpclient          httputils.HTTPClient
+	httpclient          httputils.LoggingClient
 	httpserver          *httputils.LoggingMuxServer
 }
 
@@ -64,7 +64,7 @@ func NewClient(clientRef string, serverURL string, address string, requestLoggin
 			Body:   "",
 			Status: http.StatusOK,
 		},
-		httpclient: httputils.NewHTTPClient(),
+		httpclient: httputils.NewLoggingClient(requestLogging),
 		httpserver: httputils.NewLoggingMuxServer(address, requestLogging),
 	}
 }

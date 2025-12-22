@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// LoggingMuxServer is a simple HTTP server wrapper
+// LoggingMuxServer is a simple HTTP server wrapper which logs requests and responses
 type LoggingMuxServer struct {
 	*http.Server
 	mux *http.ServeMux

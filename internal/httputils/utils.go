@@ -34,9 +34,8 @@ func GetLanguage(header http.Header) string {
 
 func logRequest(writer io.Writer, logHeading string, request *http.Request, body []byte) {
 	fmt.Fprintf(writer, "%s\n", logHeading)
-	fmt.Fprintf(writer, "Server %s\n", request.RemoteAddr)
-	fmt.Fprintf(writer, "%s %s \n", request.Method, request.URL.RequestURI())
-	fmt.Fprintf(writer, "Host %s\n", request.Host)
+	fmt.Fprintf(writer, "IP %s\n", request.RemoteAddr)
+	fmt.Fprintf(writer, "%s %s%s \n", request.Method, request.Host, request.URL.RequestURI())
 	fmt.Fprintf(writer, "Content-Type %s\n\n", request.Header.Get(HeaderContentType))
 	fmt.Fprintf(writer, "%s\n\n", string(body))
 }
