@@ -14,13 +14,8 @@ If you want to learn more about the architecture and framework decisions, check 
 
 ## Installation
 
-You need Go 1.25 installed.
-
-```bash
-make build
-```
-
-If you do not want to use `make`, or it is not available, check the [Makefile](./Makefile) for the Go commands.
+Download the latest release zip from the [releases page](https://github.com/mszalbach/sirigo/releases).
+Unzip it and start the sirigo binary in a shell.
 
 ## Usage
 
@@ -69,6 +64,8 @@ You can open a GitHub issue.
 This is a test project and contributions are not currently planned. However, contributions are not forbidden — feel free to open an issue to discuss your ideas.
 
 ## Development
+
+You need Go 1.25 installed.
 
 For development check the [Makefile](./Makefile) how to run format, linter and the tests.
 For the linter you need `golangci-lint` installed.
