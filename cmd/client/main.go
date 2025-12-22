@@ -17,12 +17,12 @@ import (
 
 func main() {
 	cfg := loadConfig()
-	file, err := os.OpenFile(cfg.logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
+	logFile, err := os.OpenFile(cfg.logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
 	if err != nil {
 		panic(err)
 	}
-	logger := slog.New(slog.NewJSONHandler(file, nil))
-	defer file.Close()
+	logger := slog.New(slog.NewJSONHandler(logFile, nil))
+	defer logFile.Close()
 	slog.SetDefault(logger)
 
 	cancelContext, cancel := context.WithCancel(context.Background())
@@ -30,7 +30,12 @@ func main() {
 	stopContext, stop := signal.NotifyContext(cancelContext, syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	siriClient := siri.NewClient(cfg.clientRef, cfg.url, cfg.clientPort)
+	httpLogFile, err := os.OpenFile(cfg.httpLogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
+	if err != nil {
+		panic(err)
+	}
+	defer httpLogFile.Close()
+	siriClient := siri.NewClient(cfg.clientRef, cfg.url, cfg.clientPort, httpLogFile)
 
 	clientTemplates, err := siri.NewTemplateCache(cfg.templateDir)
 	if err != nil {

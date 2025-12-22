@@ -37,7 +37,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 	defer server.Close()
 
 	// When
-	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
+	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS", io.Discard)
 	actual, err := client.Send(ClientRequest{
 		URL: server.URL + "/siri/2.1/situation-exchange",
 		Body: `
@@ -104,7 +104,7 @@ func Test_siri_client_body_is_a_template(t *testing.T) {
 	defer server.Close()
 
 	// When
-	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
+	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS", io.Discard)
 	_, err := client.Send(ClientRequest{
 		URL: server.URL + "/siri/2.1/situation-exchange",
 		Body: `
@@ -126,7 +126,7 @@ func Test_siri_client_body_is_a_template(t *testing.T) {
 
 func Test_siri_client_receiving_from_server(t *testing.T) {
 	// Given
-	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
+	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS", io.Discard)
 	client.AutoClientResponse.Body = `
 <Siri>
 	<DataReadyAcknowledgement>
@@ -205,7 +205,7 @@ func Test_client_send_understands_content_types(t *testing.T) {
 			defer server.Close()
 
 			// When
-			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
+			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS", io.Discard)
 			actual, err := client.Send(ClientRequest{
 				URL:  server.URL + "/siri/v2",
 				Body: "IGNORE",
@@ -224,7 +224,7 @@ func Test_server_does_not_work_for_non_post(t *testing.T) {
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
 			// Given
-			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS")
+			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS", io.Discard)
 
 			// When
 			request, _ := http.NewRequest(tc, "/players/Floyd", strings.NewReader(`

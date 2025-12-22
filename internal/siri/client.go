@@ -20,7 +20,7 @@ type Client struct {
 	AutoClientResponse  *AutoClientResponse
 	serverRequestWriter chan ServerRequest
 	httpclient          httputils.HTTPClient
-	httpserver          *httputils.HTTPServer
+	httpserver          *httputils.LoggingMuxServer
 }
 
 // ClientRequest represents a request sent by the SIRI client to the server
@@ -53,7 +53,7 @@ type ServerRequest struct {
 }
 
 // NewClient creates a new Client to interact with a SIRI server
-func NewClient(clientRef string, serverURL string, address string) Client {
+func NewClient(clientRef string, serverURL string, address string, requestLogging io.Writer) Client {
 	serverRequest := make(chan ServerRequest, 5)
 	return Client{
 		ClientRef:           clientRef,
@@ -65,7 +65,7 @@ func NewClient(clientRef string, serverURL string, address string) Client {
 			Status: http.StatusOK,
 		},
 		httpclient: httputils.NewHTTPClient(),
-		httpserver: httputils.NewHTTPServer(address),
+		httpserver: httputils.NewLoggingMuxServer(address, requestLogging),
 	}
 }
 

@@ -1,6 +1,8 @@
 package main
 
-import "flag"
+import (
+	"flag"
+)
 
 type config struct {
 	url             string
@@ -9,6 +11,7 @@ type config struct {
 	templateDir     string
 	autoresponseDir string
 	logFile         string
+	httpLogFile     string
 }
 
 func loadConfig() config {
@@ -29,6 +32,7 @@ func loadConfig() config {
 		"Folder where SIRI autoresponse templates are stored",
 	)
 	flag.StringVar(&cfg.logFile, "log", "sirigo.log", "Location of the log file")
+	flag.StringVar(&cfg.httpLogFile, "httplog", "sirigo.http.log", "Location of the http request response log file")
 
 	flag.Parse()
 
