@@ -2,11 +2,9 @@ package httputils
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -51,17 +49,14 @@ func loggingMiddleware(next http.Handler, writer io.Writer) http.Handler {
 		next.ServeHTTP(loggingResponseWriter, r)
 
 		// log request and response
-		fmt.Fprintf(writer, "Incoming Request:\n")
-		fmt.Fprintf(writer, "Server %s\n", r.RemoteAddr)
-		fmt.Fprintf(writer, "%s %s \n", r.Method, r.URL.RequestURI())
-		fmt.Fprintf(writer, "Host %s\n", r.Host)
-		fmt.Fprintf(writer, "Content-Type %s\n\n", r.Header.Get(HeaderContentType))
-		fmt.Fprintf(writer, "%s\n\n", string(bytesBody))
-
-		fmt.Fprintf(writer, "Outgoing Response:\n")
-		fmt.Fprintf(writer, "%s\n", strconv.Itoa(loggingResponseWriter.statusCode))
-		fmt.Fprintf(writer, "Content-Type %s\n\n", loggingResponseWriter.Header().Get(HeaderContentType))
-		fmt.Fprintf(writer, "%s\n\n", string(loggingResponseWriter.body))
+		logRequest(writer, "Incoming Request:", r, bytesBody)
+		logResponse(
+			writer,
+			"Outgoing Response:",
+			loggingResponseWriter.statusCode,
+			loggingResponseWriter.Header(),
+			loggingResponseWriter.body,
+		)
 	})
 }
 

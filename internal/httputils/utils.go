@@ -1,8 +1,11 @@
 package httputils
 
 import (
+	"fmt"
+	"io"
 	"mime"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -27,4 +30,20 @@ func GetLanguage(header http.Header) string {
 	}
 
 	return parts[1]
+}
+
+func logRequest(writer io.Writer, logHeading string, request *http.Request, body []byte) {
+	fmt.Fprintf(writer, "%s\n", logHeading)
+	fmt.Fprintf(writer, "Server %s\n", request.RemoteAddr)
+	fmt.Fprintf(writer, "%s %s \n", request.Method, request.URL.RequestURI())
+	fmt.Fprintf(writer, "Host %s\n", request.Host)
+	fmt.Fprintf(writer, "Content-Type %s\n\n", request.Header.Get(HeaderContentType))
+	fmt.Fprintf(writer, "%s\n\n", string(body))
+}
+
+func logResponse(writer io.Writer, logHeading string, statusCode int, header http.Header, body []byte) {
+	fmt.Fprintf(writer, "%s\n", logHeading)
+	fmt.Fprintf(writer, "%s\n", strconv.Itoa(statusCode))
+	fmt.Fprintf(writer, "Content-Type %s\n\n", header.Get(HeaderContentType))
+	fmt.Fprintf(writer, "%s\n\n", string(body))
 }
