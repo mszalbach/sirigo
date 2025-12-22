@@ -113,7 +113,8 @@ func (c *Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 			Language:      "plaintext",
 		}
 		c.serverRequestWriter <- request
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Could not read request body", slog.Any("error", err.Error()))
+		http.Error(w, "Could not read request body", http.StatusInternalServerError)
 		return
 	}
 
@@ -132,8 +133,10 @@ func (c *Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		slog.Error("Could not execute template for autoresponse", slog.Any("error", err.Error()))
+		http.Error(w, "Could not execute template for autoresponse", http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set(httputils.HeaderContentType, httputils.ContentTypeXML)
 	w.WriteHeader(c.AutoClientResponse.Status)
 	fmt.Fprint(w, responseBody)
 }
