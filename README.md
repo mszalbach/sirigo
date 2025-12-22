@@ -57,7 +57,7 @@ You can open a GitHub issue.
 ## Roadmap
 
 * [x] Have a TUI that can communicate with a SIRI/VDV server
-* [ ] Log requests and responses
+* [x] Log requests and responses
 
 ## Contributing
 
