@@ -2,6 +2,9 @@
 
 [![build](https://github.com/mszalbach/sirigo/actions/workflows/build-actions.yaml/badge.svg)](https://github.com/mszalbach/sirigo/actions/workflows/build-actions.yaml)
 
+
+![Sirigo UI](docs/assets/sirigo.gif)
+
 ## Description
 
 Sirigo is a command-line tool for interacting with [SIRI](https://transmodel-cen.eu/index.php/siri/) servers.
@@ -90,7 +93,7 @@ See the config in the `wiremock/` folder if you want to change something.
 To simulate a SIRI server request send it via curl:
 
 ```bash
-curl -X POST -H "content-type: text/xml" -d "<xml>Test</xml>" localhost:8000
+curl -X POST -H "content-type: text/xml" --data-binary "<xml>Test</xml>" localhost:8000
 ```
 
 ## License
