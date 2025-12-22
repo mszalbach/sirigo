@@ -131,12 +131,12 @@ func (c *Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 		data{Now: time.Now(), ClientRef: c.ClientRef},
 	)
 	if err != nil {
-		slog.Error("Could not execute template for autoresponse", slog.Any("error", err))
+		slog.Error("Could not execute template for autoresponse", slog.Any("error", err.Error()))
 		return
 	}
 	w.WriteHeader(c.AutoClientResponse.Status)
 	_, ferr := fmt.Fprint(w, responseBody)
 	if ferr != nil {
-		slog.Error("Could not write auto response", slog.Any("error", ferr))
+		slog.Error("Could not write auto response", slog.Any("error", ferr.Error()))
 	}
 }

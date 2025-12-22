@@ -45,7 +45,7 @@ func main() {
 
 	go func() {
 		if err := app.Run(); err != nil {
-			slog.Error("App could not be started", slog.Any("error", err))
+			slog.Error("App could not be started", slog.Any("error", err.Error()))
 			panic("App could not be started")
 		}
 	}()
