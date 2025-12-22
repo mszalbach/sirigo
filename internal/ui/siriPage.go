@@ -9,6 +9,7 @@ type siriPage struct {
 	*tview.Flex
 	siriClientView siriClientView
 	siriServerView siriServerView
+	statusBar      statusBar
 }
 
 func newSiriPage(siriApp tuiApp, siriClient *siri.Client,
@@ -21,7 +22,7 @@ func newSiriPage(siriApp tuiApp, siriClient *siri.Client,
 
 	// Building UI elements
 	errorChannel := make(chan error, 5)
-	statusBar := newStatusBar(siriApp, errorChannel)
+	siriPage.statusBar = newStatusBar(siriApp, errorChannel)
 	keymap := newKeymap()
 	siriPage.siriClientView = newSiriClientView(siriApp, siriClient, sendTemplates, errorChannel)
 	siriPage.siriServerView = newSiriServerView(siriApp, siriClient, responseTemplates, errorChannel)
@@ -32,7 +33,7 @@ func newSiriPage(siriApp tuiApp, siriClient *siri.Client,
 		AddItem(siriPage.siriServerView, 0, 1, false)
 
 	footerFlex := tview.NewFlex().
-		AddItem(keymap, 0, 1, false).AddItem(statusBar, 0, 1, false)
+		AddItem(keymap, 0, 1, false).AddItem(siriPage.statusBar, 0, 1, false)
 
 	siriPage.Flex.
 		SetDirection(tview.FlexRow).
@@ -43,6 +44,10 @@ func newSiriPage(siriApp tuiApp, siriClient *siri.Client,
 }
 
 func (sp *siriPage) send() {
-	response := sp.siriClientView.send()
-	sp.siriServerView.setResponse(response)
+	// async since request can take some time and block the UI
+	// better to inform the user about it
+	go func() {
+		response := sp.siriClientView.send()
+		sp.siriServerView.setResponse(response)
+	}()
 }

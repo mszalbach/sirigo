@@ -4,7 +4,7 @@
     "url": "/interfaces/siri/2.1/estimated-timetable.xml",
     "bodyPatterns": [
       {
-        "matchesXPath": "//DataSupplyRequest"
+        "matchesXPath": "//DataSupplyRequest//ConsumerRef[text()!='slow']"
       }
     ]
   },

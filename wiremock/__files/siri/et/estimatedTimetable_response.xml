@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1">
 	<ServiceDelivery>
-		<ResponseTimestamp>2004-12-17T09:30:46-05:00</ResponseTimestamp>
+		<ResponseTimestamp>{{now}}</ResponseTimestamp>
 		<ProducerRef>SIRI</ProducerRef>
 		<Status>true</Status>
 		<MoreData>false</MoreData>
 		<EstimatedTimetableDelivery>
-			<ResponseTimestamp>2001-12-17T09:30:47-05:00</ResponseTimestamp>
+			<ResponseTimestamp>{{now}}</ResponseTimestamp>
 			<SubscriberRef>{{xPath request.body '/Siri/DataSupplyRequest/ConsumerRef/text()'}}</SubscriberRef>
 			<SubscriptionRef>{{xPath request.body '/Siri/DataSupplyRequest/NotificationRef/text()'}}</SubscriptionRef>
 			<Status>true</Status>
 			<ValidUntil>2001-12-17T19:30:47-05:00</ValidUntil>
 			<ShortestPossibleCycle>P1Y2M3DT10H30M</ShortestPossibleCycle>
 			<EstimatedJourneyVersionFrame>
-				<RecordedAtTime>2001-12-17T09:30:47-05:00</RecordedAtTime>
+				<RecordedAtTime>{{now}}</RecordedAtTime>
 				<VersionRef>1</VersionRef>
 				<EstimatedVehicleJourney>
 					<LineRef>X123</LineRef>
@@ -40,9 +40,9 @@
 							<BoardingStretch>false</BoardingStretch>
 							<RequestStop>false</RequestStop>
 							<CallNote>Starts here</CallNote>
-							<AimedArrivalTime>2001-12-17T09:30:47-05:00</AimedArrivalTime>
+							<AimedArrivalTime>{{now}}</AimedArrivalTime>
 							<ArrivalBoardingActivity>noAlighting</ArrivalBoardingActivity>
-							<AimedDepartureTime>2001-12-17T09:30:47-05:00</AimedDepartureTime>
+							<AimedDepartureTime>{{now}}</AimedDepartureTime>
 							<DeparturePlatformName xml:lang="EN">A1</DeparturePlatformName>
 						</EstimatedCall>
 						<EstimatedCall>
@@ -51,22 +51,22 @@
 							<PredictionInaccurate>false</PredictionInaccurate>
 							<Occupancy>seatsAvailable</Occupancy>
 							<RequestStop>true</RequestStop>
-							<AimedArrivalTime>2001-12-17T09:30:47-05:00</AimedArrivalTime>
-							<ExpectedArrivalTime>2001-12-17T09:30:47-05:00</ExpectedArrivalTime>
+							<AimedArrivalTime>{{now}}</AimedArrivalTime>
+							<ExpectedArrivalTime>{{now}}</ExpectedArrivalTime>
 							<ArrivalPlatformName xml:lang="EN">B3</ArrivalPlatformName>
-							<AimedDepartureTime>2001-12-17T09:30:47-05:00</AimedDepartureTime>
-							<ExpectedDepartureTime>2001-12-17T09:30:47-05:00</ExpectedDepartureTime>
+							<AimedDepartureTime>{{now}}</AimedDepartureTime>
+							<ExpectedDepartureTime>{{now}}</ExpectedDepartureTime>
 							<DeparturePlatformName xml:lang="EN">B3</DeparturePlatformName>
 						</EstimatedCall>
 						<EstimatedCall>
 							<StopPointRef>00003</StopPointRef>
 							<PredictionInaccurate>true</PredictionInaccurate>
 							<Occupancy>full</Occupancy>
-							<AimedArrivalTime>2001-12-17T09:30:47-05:00</AimedArrivalTime>
-							<ExpectedArrivalTime>2001-12-17T09:30:47-05:00</ExpectedArrivalTime>
+							<AimedArrivalTime>{{now}}</AimedArrivalTime>
+							<ExpectedArrivalTime>{{now}}</ExpectedArrivalTime>
 							<ArrivalPlatformName xml:lang="EN">B5</ArrivalPlatformName>
-							<AimedDepartureTime>2001-12-17T09:30:47-05:00</AimedDepartureTime>
-							<ExpectedDepartureTime>2001-12-17T09:30:47-05:00</ExpectedDepartureTime>
+							<AimedDepartureTime>{{now}}</AimedDepartureTime>
+							<ExpectedDepartureTime>{{now}}</ExpectedDepartureTime>
 							<DepartureBoardingActivity>noBoarding</DepartureBoardingActivity>
 						</EstimatedCall>
 					</EstimatedCalls>
