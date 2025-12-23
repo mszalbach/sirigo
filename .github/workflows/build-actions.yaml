@@ -52,7 +52,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create SBOM
-        uses: anchore/sbom-action@v0.20.11
+        uses: anchore/sbom-action@v0.21.0
         with:
           artifact-name: sirigo.cyclonedx
           format: cyclonedx
