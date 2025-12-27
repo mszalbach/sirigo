@@ -19,6 +19,10 @@ var keys = []struct {
 		description: "Send",
 	},
 	{
+		key:         "Ctrl-E",
+		description: "Editor",
+	},
+	{
 		key:         "Ctrl-X",
 		description: "Exit",
 	},

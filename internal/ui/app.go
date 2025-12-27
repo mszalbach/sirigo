@@ -15,6 +15,7 @@ import (
 type tuiApp interface {
 	QueueUpdateDraw(f func()) *tview.Application
 	register(prioritizedComponents ...tview.Primitive)
+	Suspend(func()) bool
 }
 
 // SiriApp is the main tview application for the SIRI client

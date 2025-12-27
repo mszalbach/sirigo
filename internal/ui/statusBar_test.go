@@ -26,6 +26,11 @@ func (app *AppMock) register(_ ...tview.Primitive) {
 	// not needed for this test
 }
 
+func (app *AppMock) Suspend(_ func()) bool {
+	// not needed for this test
+	return true
+}
+
 var app = new(AppMock)
 
 func newTestScreen(t *testing.T) tcell.SimulationScreen {

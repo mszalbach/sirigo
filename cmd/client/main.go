@@ -50,7 +50,7 @@ func main() {
 
 	go func() {
 		if err := app.Run(); err != nil {
-			slog.Error("App could not be started", slog.Any("error", err.Error()))
+			slog.Error("App could not be started", slog.Any("error", err))
 			panic("App could not be started")
 		}
 	}()
@@ -72,6 +72,6 @@ func main() {
 	timeoutCtx, timeoutFunc := context.WithTimeout(context.Background(), 10*time.Second)
 	defer timeoutFunc()
 	if stopErr := siriClient.Stop(timeoutCtx); stopErr != nil {
-		slog.Warn("server stop failed", slog.Any("error", stopErr.Error()))
+		slog.Warn("server stop failed", slog.Any("error", stopErr))
 	}
 }

@@ -48,6 +48,7 @@ g: 		Move to the top.
 G: 		Move to the bottom.
 Ctrl-F: Move down by one page.
 Ctrl-B: Move up by one page.
+Ctrl-E: Open the current content in the editor defined by the EDITOR environment variable. If not set, vi/notepad is used.
 `)
 	helpPage.AddItem(textview, 0, 1, true)
 	return helpPage

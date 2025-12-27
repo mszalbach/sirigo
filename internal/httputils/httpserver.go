@@ -40,7 +40,7 @@ func loggingMiddleware(next http.Handler, writer io.Writer) http.Handler {
 
 		bytesBody, err := io.ReadAll(r.Body)
 		if err != nil {
-			slog.Warn("Could not read body from incoming server request", slog.Any("error", err.Error()))
+			slog.Warn("Could not read body from incoming server request", slog.Any("error", err))
 		}
 		// restore body because you can read only once
 		r.Body = io.NopCloser(bytes.NewBuffer(bytesBody))
