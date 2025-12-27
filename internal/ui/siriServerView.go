@@ -8,9 +8,8 @@ import (
 )
 
 type siriServerView struct {
-	app tuiApp
 	*tview.Flex
-	serverResponseTextView *tview.TextView
+	serverResponseTextView *codeTextView
 }
 
 func newSiriServerView(
@@ -19,12 +18,8 @@ func newSiriServerView(
 	responseTemplates siri.TemplateCache,
 	errorChannel chan<- error,
 ) siriServerView {
-	serverResponseTextView := tview.NewTextView()
-	serverResponseTextView.SetDynamicColors(true).SetBorder(true).SetTitle("Server Response")
-
-	serverRequestTextView := tview.NewTextView()
-	serverRequestTextView.SetDynamicColors(true).SetBorder(true).SetTitle("Server Request")
-
+	serverResponseTextView := newCodeTextView(app, "Server Response")
+	serverRequestTextView := newCodeTextView(app, "Server Request")
 	autoresponseDropdown := tview.NewDropDown().SetLabel("Client auto-response: ")
 
 	templateNames, err := responseTemplates.TemplateNames()
@@ -50,7 +45,7 @@ func newSiriServerView(
 		AddItem(serverResponseTextView, 0, 2, false).
 		AddItem(serverRequestTextView, 0, 1, false)
 
-	go listenForServerRequests(app, serverRequestTextView, siriClient)
+	go listenForServerRequests(serverRequestTextView, siriClient)
 
 	// register focus order
 	app.register(autoresponseDropdown, serverResponseTextView, serverRequestTextView)
@@ -58,29 +53,16 @@ func newSiriServerView(
 	return siriServerView{
 		Flex:                   siriServerFlex,
 		serverResponseTextView: serverResponseTextView,
-		app:                    app,
 	}
 }
 
-func listenForServerRequests(app tuiApp, serverRequestTextView *tview.TextView, siriClient *siri.Client) {
+func listenForServerRequests(serverRequestTextView *codeTextView, siriClient *siri.Client) {
 	for req := range siriClient.ServerRequest {
 		body := fmt.Sprintf("<!-- %s%s -->\n%s", req.RemoteAddress, req.URL, req.Body)
-		serverRequestTextView.ScrollToBeginning()
-		// changing UI from an async go routine, so it needs to use the queueUpdate methods
-		app.QueueUpdateDraw(func() {
-			serverRequestTextView.SetText(tview.TranslateANSI(highlight(body, req.Language)))
-		})
+		serverRequestTextView.SetCode(body, req.Language)
 	}
 }
 
 func (sv siriServerView) setResponse(response siri.ServerResponse) {
-	sv.serverResponseTextView.ScrollToBeginning()
-	sv.serverResponseTextView.SetText(response.Body)
-	// highlight takes a lot of time for big responses, so doing it delayed later
-	go func() {
-		highlighted := tview.TranslateANSI(highlight(response.Body, response.Language))
-		sv.app.QueueUpdateDraw(func() {
-			sv.serverResponseTextView.SetText(highlighted)
-		})
-	}()
+	sv.serverResponseTextView.SetCode(response.Body, response.Language)
 }
