@@ -3,7 +3,7 @@ module github.com/mszalbach/sirigo
 go 1.25.4
 
 require (
-	github.com/alecthomas/chroma/v2 v2.21.1
+	github.com/alecthomas/chroma/v2 v2.22.0
 	github.com/gdamore/tcell/v2 v2.13.6
 	github.com/rivo/tview v0.42.0
 	github.com/stretchr/testify v1.11.1
