@@ -55,7 +55,7 @@ func main() {
 		}
 	}()
 	go func() {
-		if err := siriClient.ListenAndServe(); errors.Is(err, http.ErrServerClosed) {
+		if err := siriClient.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			slog.Error(
 				"SIRI client could not be started",
 				slog.String("address", cfg.clientPort),
