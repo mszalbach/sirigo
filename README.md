@@ -95,6 +95,6 @@ curl -X POST -H "content-type: text/xml" --data-binary "<xml>Test</xml>" localho
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under Mozilla Public License 2.0.
 
 See [LICENSE](./LICENSE).
