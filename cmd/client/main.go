@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -25,8 +26,8 @@ func main() {
 	defer logFile.Close()
 	slog.SetDefault(logger)
 
-	cancelContext, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	cancelContext, cancel := context.WithCancelCause(context.Background())
+	defer cancel(nil)
 	stopContext, stop := signal.NotifyContext(cancelContext, syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
@@ -51,7 +52,7 @@ func main() {
 	go func() {
 		if err := app.Run(); err != nil {
 			slog.Error("App could not be started", slog.Any("error", err))
-			panic("App could not be started")
+			cancel(err)
 		}
 	}()
 	go func() {
@@ -61,7 +62,7 @@ func main() {
 				slog.String("address", cfg.clientPort),
 				slog.Any("error", err),
 			)
-			panic("Server not working")
+			cancel(err)
 		}
 	}()
 
@@ -73,5 +74,10 @@ func main() {
 	defer timeoutFunc()
 	if stopErr := siriClient.Stop(timeoutCtx); stopErr != nil {
 		slog.Warn("server stop failed", slog.Any("error", stopErr))
+	}
+
+	if err := context.Cause(stopContext); !errors.Is(err, context.Canceled) {
+		slog.Error("App could not be started: ", slog.Any("error", err))
+		fmt.Println("App could not be started:", err)
 	}
 }

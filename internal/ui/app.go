@@ -29,7 +29,7 @@ func NewSiriApp(
 	siriClient *siri.Client,
 	sendTemplates siri.TemplateCache,
 	responseTemplates siri.TemplateCache,
-	cancel context.CancelFunc,
+	cancel context.CancelCauseFunc,
 ) *SiriApp {
 	siriApp := &SiriApp{
 		Application:     tview.NewApplication(),
@@ -58,7 +58,7 @@ func NewSiriApp(
 	siriApp.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlX:
-			cancel()
+			cancel(nil)
 		case tcell.KeyCtrlO:
 			siriPage.send()
 			return nil
