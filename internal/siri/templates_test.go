@@ -3,62 +3,64 @@ package siri
 import (
 	"os"
 	"testing"
-	"time"
+	"testing/synctest"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-var now = time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC)
-
 func Test_returns_rendered_template_with_replaced_variables(t *testing.T) {
-	// Given
-	template := `<Siri>
+	synctest.Test(t, func(t *testing.T) {
+		// Given
+		template := `<Siri>
   <time>{{ dateTime .Now }}</time>
   <futureTime>{{ dateTime (addTime .Now "5m") }}<futureTime>
   <client>{{ .ClientRef }}</client>
 </Siri>`
-	data := data{Now: now, ClientRef: "testClient"}
+		data := data{ClientRef: "testClient"}
 
-	// When
-	actual, err := executeTemplate(template, data)
-	require.NoError(t, err)
+		// When
+		actual, err := executeTemplate(template, data)
+		require.NoError(t, err)
 
-	// Then
-	expected := `<Siri>
-  <time>2024-06-01T12:00:00Z</time>
-  <futureTime>2024-06-01T12:05:00Z<futureTime>
+		// Then
+		expected := `<Siri>
+  <time>2000-01-01T00:00:00Z</time>
+  <futureTime>2000-01-01T00:05:00Z<futureTime>
   <client>testClient</client>
 </Siri>`
-	assert.Equal(t, expected, actual)
+		assert.Equal(t, expected, actual)
+	})
 }
 
 func Test_returns_rendered_template_when_empty_data_is_used(t *testing.T) {
-	// Given
-	template := `<Siri>
+	synctest.Test(t, func(t *testing.T) {
+		// Given
+		template := `<Siri>
   <time>{{ dateTime .Now }}</time>
   <futureTime>{{ dateTime (addTime .Now "5m") }}<futureTime>
   <client>{{ .ClientRef }}</client>
 </Siri>`
-	data := data{}
+		data := data{}
 
-	// When
-	actual, err := executeTemplate(template, data)
-	require.NoError(t, err)
+		// When
+		actual, err := executeTemplate(template, data)
+		require.NoError(t, err)
 
-	// Then
-	expected := `<Siri>
-  <time>0001-01-01T00:00:00Z</time>
-  <futureTime>0001-01-01T00:05:00Z<futureTime>
+		// Then
+		expected := `<Siri>
+  <time>2000-01-01T00:00:00Z</time>
+  <futureTime>2000-01-01T00:05:00Z<futureTime>
   <client></client>
 </Siri>`
-	assert.Equal(t, expected, actual)
+		assert.Equal(t, expected, actual)
+	})
 }
 
 func Test_returns_empty_when_there_is_no_templates(t *testing.T) {
 	// Given
 	template := ""
-	data := data{Now: now, ClientRef: "testClient"}
+	data := data{ClientRef: "testClient"}
 
 	// When
 	actual, err := executeTemplate(template, data)

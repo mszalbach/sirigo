@@ -7,7 +7,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"time"
 
 	"github.com/mszalbach/sirigo/internal/httputils"
 )
@@ -71,7 +70,7 @@ func NewClient(clientRef string, serverURL string, address string, requestLoggin
 
 // Send sends a message to the SIRI server
 func (c *Client) Send(clientRequest ClientRequest) (ServerResponse, error) {
-	executedBody, err := executeTemplate(clientRequest.Body, data{Now: time.Now(), ClientRef: c.ClientRef})
+	executedBody, err := executeTemplate(clientRequest.Body, data{ClientRef: c.ClientRef})
 	if err != nil {
 		return ServerResponse{}, err
 	}
@@ -129,7 +128,7 @@ func (c *Client) handleServerRequests(w http.ResponseWriter, r *http.Request) {
 
 	responseBody, err := executeTemplate(
 		c.AutoClientResponse.Body,
-		data{Now: time.Now(), ClientRef: c.ClientRef},
+		data{ClientRef: c.ClientRef},
 	)
 	if err != nil {
 		slog.Error("Could not execute template for autoresponse", slog.Any("error", err))

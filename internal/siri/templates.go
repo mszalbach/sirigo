@@ -27,7 +27,6 @@ func NewTemplateCache(templatePath string) (TemplateCache, error) {
 
 // data is used to render the templates
 type data struct {
-	Now       time.Time
 	ClientRef string
 }
 
@@ -53,6 +52,11 @@ func (tc TemplateCache) GetTemplate(name string) (string, error) {
 	return string(content), err
 }
 
+type templateData struct {
+	Now       time.Time
+	ClientRef string
+}
+
 // executeTemplate finds the template and executes it with the provided data
 func executeTemplate(content string, data data) (string, error) {
 	siriTemplate, err := template.New("siri").Funcs(funcs).Parse(content)
@@ -61,7 +65,10 @@ func executeTemplate(content string, data data) (string, error) {
 	}
 
 	var bytesBuffer bytes.Buffer
-	if err := siriTemplate.Execute(&bytesBuffer, data); err != nil {
+	if err := siriTemplate.Execute(
+		&bytesBuffer,
+		templateData{Now: time.Now().UTC(), ClientRef: data.ClientRef},
+	); err != nil {
 		return "", err
 	}
 	return bytesBuffer.String(), nil
