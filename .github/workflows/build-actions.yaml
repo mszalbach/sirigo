@@ -12,7 +12,7 @@ jobs:
       - name: install go
         uses: actions/setup-go@v6.2.0
         with:
-          go-version-file: go.mod
+          go-version: "1.25.4"
           cache-dependency-path: go.sum
 
       - name: Lint
@@ -22,7 +22,7 @@ jobs:
 
       - name: Run Tests
         run: make test
-    
+
       - name: Vulnerability Scan
         uses: golang/govulncheck-action@v1.0.4
         with:
