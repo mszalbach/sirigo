@@ -11,7 +11,7 @@ import (
 )
 
 // tuiApp allows a component to use features of the tview.Application and custom provided ones.
-// Requiered for mocking this in tests since a tview.Application is not so good testable (at my current understanding)
+// Required for mocking this in tests since a tview.Application is not so good testable (at my current understanding)
 type tuiApp interface {
 	QueueUpdateDraw(f func()) *tview.Application
 	register(prioritizedComponents ...tview.Primitive)
