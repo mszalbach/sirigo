@@ -4,10 +4,12 @@ import "github.com/rivo/tview"
 
 type helpPage struct {
 	*tview.Flex
+	name string
 }
 
 func newHelpPage() *helpPage {
 	helpPage := &helpPage{
+		name: "help",
 		Flex: tview.NewFlex(),
 	}
 	textview := tview.NewTextView()

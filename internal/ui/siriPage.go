@@ -7,6 +7,7 @@ import (
 
 type siriPage struct {
 	*tview.Flex
+	name           string
 	siriClientView siriClientView
 	siriServerView siriServerView
 	statusBar      statusBar
@@ -17,6 +18,7 @@ func newSiriPage(siriApp tuiApp, siriClient *siri.Client,
 	responseTemplates siri.TemplateCache,
 ) *siriPage {
 	siriPage := siriPage{
+		name: "siri",
 		Flex: tview.NewFlex(),
 	}
 

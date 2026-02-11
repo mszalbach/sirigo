@@ -45,8 +45,8 @@ func NewSiriApp(
 	helpPage := newHelpPage()
 
 	pages := tview.NewPages()
-	pages.AddAndSwitchToPage("siri", siriPage, true)
-	pages.AddPage("help", helpPage, true, false)
+	pages.AddAndSwitchToPage(siriPage.name, siriPage, true)
+	pages.AddPage(helpPage.name, helpPage, true, false)
 
 	siriApp.SetRoot(pages, true).SetFocus(pages)
 
@@ -69,10 +69,10 @@ func NewSiriApp(
 		case tcell.KeyBacktab:
 			prevFocus(siriApp)
 		case tcell.KeyF1:
-			if pages.GetPage("siri").HasFocus() {
-				pages.SwitchToPage("help")
+			if pages.GetPage(siriPage.name).HasFocus() {
+				pages.SwitchToPage(helpPage.name)
 			} else {
-				pages.SwitchToPage("siri")
+				pages.SwitchToPage(siriPage.name)
 			}
 		}
 		return event
