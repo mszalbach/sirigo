@@ -48,6 +48,8 @@ jobs:
           go-version-file: go.mod
           cache-dependency-path: go.sum
 
+      - name: install syft
+        uses: anchore/syft-action@v0.24.0
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v7.0.0
         with:
@@ -55,9 +57,3 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create SBOM
-        uses: anchore/sbom-action@v0.24.0
-        with:
-          artifact-name: sirigo.cyclonedx
-          format: cyclonedx
