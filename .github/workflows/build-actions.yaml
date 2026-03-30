@@ -49,7 +49,7 @@ jobs:
           cache-dependency-path: go.sum
 
       - name: install syft
-        uses: anchore/syft-action@v0.24.0
+        uses: anchore/sbom-action/download-syft@v0.24.0
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v7.0.0
         with:
