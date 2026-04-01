@@ -65,7 +65,7 @@ This is a test project and contributions are not currently planned. However, con
 
 ## Development
 
-You need Go 1.25 installed.
+You need Go 1.26 installed.
 
 For development check the [Makefile](./Makefile) how to run format, linter and the tests.
 For the linter you need `golangci-lint` installed.
