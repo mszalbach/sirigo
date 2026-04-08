@@ -19,6 +19,8 @@ TODO.md
 !*.xml
 !*.json
 
+!mise.toml
+
 !Makefile
 
 # ...even if they are in subdirectories
