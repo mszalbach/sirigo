@@ -74,6 +74,7 @@ Use `github.com/rivo/tview` as the primary TUI framework. `Bubbletea` looks nice
 ### Consequences
 
 - The choice constrains UI patterns to what `tview` supports but reduces implementation effort
+- not the newest or most modern TUI framework, but seems to be stable
 
 ## 20251116-1 Focusing on ADRs and C4 for architecture documentation
 
