@@ -58,6 +58,7 @@ You can open a GitHub issue.
 
 * [x] Have a TUI that can communicate with a SIRI/VDV server
 * [x] Log requests and responses
+* [ ] Provide a Docker image which can be used to run Sirigo
 
 ## Contributing
 

@@ -38,7 +38,7 @@ C4Container
     Rel(cmdClient, uiPkg, "Creates and runs")
     Rel(cmdClient, siriPkg, "Creates and initializes")
     Rel(uiPkg, siriPkg, "Sends requests, receives responses")
-    Rel(siriPkg, siriServer, "HTTP requests/responses")
+    BiRel(siriPkg, siriServer, "HTTP requests/responses")
 
     UpdateElementStyle(empty, $fontColor="rgba(0,0,0,0)", $bgColor="rgba(0,0,0,0)", $borderColor="rgba(0,0,0,0)")
     UpdateRelStyle(uiPkg, siriPkg, $offsetY="40", $offsetX="-60")
