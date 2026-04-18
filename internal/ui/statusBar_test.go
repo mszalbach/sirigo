@@ -36,6 +36,7 @@ var app = new(AppMock)
 func newTestScreen(t *testing.T) tcell.SimulationScreen {
 	t.Helper()
 	screen := tcell.NewSimulationScreen("")
+	t.Cleanup(screen.Fini)
 	err := screen.Init()
 	require.NoError(t, err)
 	return screen
@@ -44,7 +45,6 @@ func newTestScreen(t *testing.T) tcell.SimulationScreen {
 func Test_is_empty_without_channel(t *testing.T) {
 	// Given
 	screen := newTestScreen(t)
-	defer screen.Fini()
 	box := newStatusBar(app, nil)
 
 	// When
@@ -58,7 +58,6 @@ func Test_is_empty_without_channel(t *testing.T) {
 func Test_shows_error_when_one_is_sent_via_channel(t *testing.T) {
 	// Given
 	screen := newTestScreen(t)
-	defer screen.Fini()
 	channel := make(chan error)
 
 	box := newStatusBar(app, channel)
