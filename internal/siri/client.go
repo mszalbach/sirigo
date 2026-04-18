@@ -52,9 +52,9 @@ type ServerRequest struct {
 }
 
 // NewClient creates a new Client to interact with a SIRI server
-func NewClient(clientRef string, serverURL string, address string, requestLogging io.Writer) Client {
+func NewClient(clientRef string, serverURL string, address string, requestLogging io.Writer) *Client {
 	serverRequest := make(chan ServerRequest, 5)
-	return Client{
+	return &Client{
 		ClientRef:           clientRef,
 		ServerURL:           serverURL,
 		ServerRequest:       serverRequest,

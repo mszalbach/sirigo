@@ -47,7 +47,7 @@ func main() {
 		panic(err)
 	}
 
-	app := ui.NewSiriApp(&siriClient, clientTemplates, serverTemplates, cancel)
+	app := ui.NewSiriApp(siriClient, clientTemplates, serverTemplates, cancel)
 
 	go func() {
 		if err := app.Run(); err != nil {
