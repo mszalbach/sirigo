@@ -5,7 +5,7 @@ go 1.25.4
 toolchain go1.26
 
 require (
-	github.com/alecthomas/chroma/v2 v2.23.1
+	github.com/alecthomas/chroma/v2 v2.24.1
 	github.com/gdamore/tcell/v2 v2.13.9
 	github.com/rivo/tview v0.42.0
 	github.com/stretchr/testify v1.11.1
@@ -13,7 +13,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/dlclark/regexp2 v1.11.5 // indirect
+	github.com/dlclark/regexp2 v1.12.0 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.3.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
