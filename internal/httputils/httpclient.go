@@ -49,7 +49,7 @@ func (hc LoggingClient) Do(req *http.Request) (Response, error) {
 	// restore body because you can read only once
 	req.Body = io.NopCloser(bytes.NewBuffer(bytesBody))
 
-	//nolint gosec // it is the idea of this client to send out arbitrary requests
+	//nolint:gosec // iby design this should send arbitrary requests
 	res, err := hc.client.Do(req)
 	if err != nil {
 		return Response{}, err

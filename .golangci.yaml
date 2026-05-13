@@ -19,6 +19,8 @@ linters:
     - errorlint
     - usestdlibvars
     - misspell
+    - forbidigo
+    - nolintlint
   exclusions:
     presets:
       - std-error-handling

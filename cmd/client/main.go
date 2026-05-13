@@ -78,6 +78,7 @@ func main() {
 
 	if err := context.Cause(stopContext); !errors.Is(err, context.Canceled) {
 		slog.Error("App could not be started: ", slog.Any("error", err))
+		//nolint:forbidigo // here no app is running and we can inform the user via stdout
 		fmt.Println("App could not be started:", err)
 	}
 }
