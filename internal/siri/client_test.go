@@ -1,4 +1,4 @@
-package siri //nolint testpackage
+package siri
 
 import (
 	"fmt"

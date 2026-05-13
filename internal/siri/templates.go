@@ -45,7 +45,7 @@ var funcs = template.FuncMap{
 
 // GetTemplate returns the content of a template on the filesystem
 func (tc TemplateCache) GetTemplate(name string) (string, error) {
-	content, err := tc.root.ReadFile(name) //nolint gosec
+	content, err := tc.root.ReadFile(name)
 	if err != nil {
 		return "", err
 	}

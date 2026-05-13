@@ -32,12 +32,6 @@ linters:
       enable-all: true
       disabled-checks:
         - paramTypeCombine # I find it more clear to have explicit types in parameters
-    gosec:
-      excludes:
-        # disabled currently I interpret them more as false positive
-        - G704
-        - G705
-        - G706
 formatters:
   enable:
     - gofumpt

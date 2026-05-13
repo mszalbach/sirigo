@@ -64,7 +64,7 @@ func (ctv *codeTextView) openInEditor() {
 		}
 	}
 
-	cmd := exec.CommandContext( // nolint:gosec // when some one captures the EDITOR env you have bigger problems
+	cmd := exec.CommandContext( //nolint:gosec // when some one captures the EDITOR env you have bigger problems
 		context.Background(),
 		editor,
 		f.Name(),
