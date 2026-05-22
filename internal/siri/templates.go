@@ -3,8 +3,8 @@ package siri
 import (
 	"bytes"
 	"fmt"
+	"io/fs"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
@@ -77,27 +77,26 @@ func executeTemplate(content string, data data) (string, error) {
 // TemplateNames returns all found template names from the root folder
 func (tc TemplateCache) TemplateNames() ([]string, error) {
 	var templateNames []string
-	root := tc.root.Name()
-	err := filepath.WalkDir(
-		root,
-		func(path string, d os.DirEntry, err error) error {
+	err := fs.WalkDir(
+		tc.root.FS(),
+		".",
+		func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
 			if d.Type().IsRegular() {
 				if strings.HasSuffix(d.Name(), ".xml") {
-					f, err := filepath.Rel(root, path)
 					if err != nil {
 						return err
 					}
-					templateNames = append(templateNames, f)
+					templateNames = append(templateNames, path)
 				}
 			}
 			return nil
 		},
 	)
 	if err != nil {
-		return nil, fmt.Errorf("could not get template names from %s: %w", root, err)
+		return nil, fmt.Errorf("could not get template names from %s: %w", tc.root.Name(), err)
 	}
 
 	return templateNames, nil
