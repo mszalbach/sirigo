@@ -86,9 +86,6 @@ func (tc TemplateCache) TemplateNames() ([]string, error) {
 			}
 			if d.Type().IsRegular() {
 				if strings.HasSuffix(d.Name(), ".xml") {
-					if err != nil {
-						return err
-					}
 					templateNames = append(templateNames, path)
 				}
 			}
