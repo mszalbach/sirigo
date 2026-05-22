@@ -36,6 +36,7 @@ func loggingMiddleware(next http.Handler, writer io.Writer) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		loggingResponseWriter := &loggingResponseWriter{
 			wrappedWriter: w,
+			statusCode:    http.StatusOK, // default status code is 200 OK
 		}
 
 		bytesBody, err := io.ReadAll(r.Body)
