@@ -34,7 +34,12 @@ func newKeymap() *tview.TextView {
 
 	builder := strings.Builder{}
 	for _, k := range keys {
-		builder.WriteString(keyColor + k.key + descriptionColor + " " + k.description + " ")
+		builder.WriteString(keyColor)
+		builder.WriteString(k.key)
+		builder.WriteString(descriptionColor)
+		builder.WriteString(" ")
+		builder.WriteString(k.description)
+		builder.WriteString(" ")
 	}
 	keyMap.SetText(builder.String())
 	return keyMap
