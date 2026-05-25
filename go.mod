@@ -4,7 +4,7 @@ go 1.26.3
 
 require (
 	github.com/alecthomas/chroma/v2 v2.24.1
-	github.com/gdamore/tcell/v2 v2.13.9
+	github.com/gdamore/tcell/v2 v2.13.10
 	github.com/rivo/tview v0.42.0
 	github.com/stretchr/testify v1.11.1
 )
