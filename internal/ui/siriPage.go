@@ -23,7 +23,7 @@ func newSiriPage(siriApp tuiApp, siriClient *siri.Client,
 	}
 
 	// Building UI elements
-	errorChannel := make(chan error, 5)
+	errorChannel := make(chan error, 1)
 	siriPage.statusBar = newStatusBar(siriApp, errorChannel)
 	keymap := newKeymap()
 	siriPage.siriClientView = newSiriClientView(siriApp, siriClient, sendTemplates, errorChannel)

@@ -53,7 +53,7 @@ type ServerRequest struct {
 
 // NewClient creates a new Client to interact with a SIRI server
 func NewClient(clientRef string, serverURL string, address string, requestLogging io.Writer) *Client {
-	serverRequest := make(chan ServerRequest, 5)
+	serverRequest := make(chan ServerRequest, 1)
 	return &Client{
 		ClientRef:           clientRef,
 		ServerURL:           serverURL,
