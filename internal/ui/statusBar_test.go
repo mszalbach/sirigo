@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -58,17 +59,20 @@ func Test_is_empty_without_channel(t *testing.T) {
 func Test_shows_error_when_one_is_sent_via_channel(t *testing.T) {
 	// Given
 	screen := newTestScreen(t)
-	channel := make(chan error)
+	channel := make(chan error, 1)
 
 	box := newStatusBar(app, channel)
 
 	// When
 	channel <- errors.New("failed to send")
-	box.Draw(screen)
 
 	// Then
-	actualLine := getScreenTextLine(screen, 0, 20)
-	assert.Equal(t, "failed to send", actualLine)
+	// this is an asynchronous update, so we need to wait for the update to happen
+	assert.EventuallyWithT(t, func(c *assert.CollectT) {
+		box.Draw(screen)
+		actualLine := getScreenTextLine(screen, 0, 20)
+		assert.Equal(c, "failed to send", actualLine)
+	}, 1*time.Second, 100*time.Millisecond)
 }
 
 func getScreenTextLine(screen tcell.SimulationScreen, y int, length int) string {
