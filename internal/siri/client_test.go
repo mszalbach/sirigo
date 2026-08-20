@@ -33,7 +33,7 @@ func Test_siri_client_sending_to_server(t *testing.T) {
 	</SubscriptionResponse>
 </Siri>`)
 	}))
-	defer server.Close()
+	t.Cleanup(server.Close)
 
 	// When
 	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS", io.Discard)
@@ -84,7 +84,9 @@ func Test_siri_client_body_is_a_template(t *testing.T) {
 		rw.Header().Set("Content-Type", "application/xml")
 		rw.WriteHeader(http.StatusOK)
 
-		defer req.Body.Close()
+		t.Cleanup(func() {
+			_ = req.Body.Close()
+		})
 		bytesBody, err := io.ReadAll(req.Body)
 		assert.NoError(t, err)
 		assert.Equal(t, `
@@ -100,7 +102,7 @@ func Test_siri_client_body_is_a_template(t *testing.T) {
 	</ServiceRequest>
 </Siri>`, string(bytesBody))
 	}))
-	defer server.Close()
+	t.Cleanup(server.Close)
 
 	// When
 	client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS", io.Discard)
@@ -201,7 +203,7 @@ func Test_client_send_understands_content_types(t *testing.T) {
 				rw.Header().Set("Content-Type", tc.actualContentType)
 				rw.WriteHeader(http.StatusOK)
 			}))
-			defer server.Close()
+			t.Cleanup(server.Close)
 
 			// When
 			client := NewClient("CLIENT REF", "SERVER URL", "CLIENT ADDRESS", io.Discard)
