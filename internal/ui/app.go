@@ -66,8 +66,10 @@ func NewSiriApp(
 			return nil
 		case tcell.KeyTab:
 			nextFocus(siriApp)
+			return nil
 		case tcell.KeyBacktab:
 			prevFocus(siriApp)
+			return nil
 		case tcell.KeyF1:
 			if pages.GetPage(siriPage.name).HasFocus() {
 				pages.SwitchToPage(helpPage.name)
