@@ -1,6 +1,6 @@
 # Sirigo
 
-[![build](https://github.com/mszalbach/sirigo/actions/workflows/build-actions.yaml/badge.svg)](https://github.com/mszalbach/sirigo/actions/workflows/build-actions.yaml)
+[![build](https://github.com/mszalbach/sirigo/actions/workflows/ci.yaml/badge.svg)](https://github.com/mszalbach/sirigo/actions/workflows/ci.yaml)
 
 
 ![Sirigo UI](docs/assets/sirigo.gif)
