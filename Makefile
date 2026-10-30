@@ -14,6 +14,10 @@ test: ## Run the tests.
 
 .PHONY: lint
 lint: ## Run the linter.
+	@golangci-lint run --fix
+
+.PHONY: lint-ci
+lint-ci: ## Run the linter for ci without auto fix.
 	@golangci-lint run
 
 .PHONY: fmt
