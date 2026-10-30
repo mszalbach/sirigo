@@ -1,14 +1,37 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:best-practices",
+    ":semanticCommits"
   ],
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
     "enabled": true
   },
+  "dependencyDashboardOSVVulnerabilitySummary": "all",
   "postUpdateOptions": [
     "gomodTidy"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.github\\/workflows\\/.*\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) packageName=(?<packageName>\\S+)\\s+GOLANG_VERSION:\\s*'(?<currentValue>[^']+)'"
+      ]
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "golang",
+        "go"
+      ],
+      "groupName": "Go version",
+      "semanticCommitType": "fix"
+    }
   ],
   "automerge": true
 }
