@@ -3,7 +3,7 @@ package ui
 import (
 	"bytes"
 
-	"github.com/alecthomas/chroma/v2/quick"
+	"github.com/alecthomas/chroma/v3/quick"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
